@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: finance-db
+    restart: always
+    environment:
+      POSTGRES_USER: user_finance
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: finance_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
