@@ -45,7 +45,7 @@ export class TransactionsService {
 
     return {
       status: 'success',
-      message: 'Transaksi berhasil dicatat, bro!',
+      message: 'Transaksi berhasil dicatat, cuy!',
       data: transaction,
     };
   }

@@ -1,15 +1,19 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from '../auth/dto/create-transaction.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { GetUser } from '../../common/get-user.decorator';
 
 @Controller('transactions')
+@UseGuards(JwtAuthGuard)
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
-  async create(@Body() dto: CreateTransactionDto) {
-    const mockUserId = 'id-user-dari-database-lu';
-
-    return this.transactionsService.createTransaction(mockUserId, dto);
+  async create(
+    @Body() dto: CreateTransactionDto,
+    @GetUser('id') userId: string,
+  ) {
+    return this.transactionsService.createTransaction(userId, dto);
   }
 }

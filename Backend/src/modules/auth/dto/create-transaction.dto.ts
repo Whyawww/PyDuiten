@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsNumber, IsString, IsEnum } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsEnum,
+  IsOptional,
+} from 'class-validator';
 
 export enum TransactionType {
   INCOME = 'INCOME',
@@ -18,5 +24,7 @@ export class CreateTransactionDto {
   @IsString()
   categoryName: string;
 
+  @IsString()
+  @IsOptional()
   description?: string;
 }
