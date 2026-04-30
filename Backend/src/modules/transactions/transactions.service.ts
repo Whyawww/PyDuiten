@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateTransactionDto } from '../auth/dto/create-transaction.dto';
+import { AiService } from '../ai/ai.service';
 
 @Injectable()
 export class TransactionsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private aiService: AiService,
+  ) {}
 
   async createTransaction(userId: string, dto: CreateTransactionDto) {
     let category = await this.prisma.category.findFirst({
@@ -47,6 +51,57 @@ export class TransactionsService {
       status: 'success',
       message: 'Transaksi berhasil dicatat, cuy!',
       data: transaction,
+    };
+  }
+
+  async getSummary(userId: string) {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    endOfMonth.setHours(23, 59, 59, 999);
+
+    const aggregations = await this.prisma.transaction.groupBy({
+      by: ['type'],
+      where: {
+        userId: userId,
+        createdAt: {
+          gte: startOfMonth,
+          lte: endOfMonth,
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+    let totalIncome = 0;
+    let totalExpense = 0;
+
+    aggregations.forEach((agg) => {
+      const sumAmount = agg._sum.amount ? Number(agg._sum.amount) : 0;
+
+      if (agg.type === 'INCOME') {
+        totalIncome = sumAmount;
+      } else if (agg.type === 'EXPENSE') {
+        totalExpense = sumAmount;
+      }
+    });
+
+    const balance = totalIncome - totalExpense;
+
+    const aiAdvice = await this.aiService.generateFinancialAdvice(
+      totalIncome,
+      totalExpense,
+    );
+
+    return {
+      status: 'success',
+      data: {
+        totalIncome,
+        totalExpense,
+        balance,
+        aiAdvice,
+      },
     };
   }
 }

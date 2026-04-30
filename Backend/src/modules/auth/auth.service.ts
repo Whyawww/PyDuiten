@@ -45,7 +45,7 @@ export class AuthService {
         where: { email: data.email },
       })
     ) {
-      throw new BadRequestException('Email sudah digunakan, bro.');
+      throw new BadRequestException('Email udah digunakan, cuy.');
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(data.password, salt);

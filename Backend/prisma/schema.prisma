@@ -43,6 +43,8 @@ model Transaction {
   userId      String
   user        User     @relation(fields: [userId], references: [id])
 
+  createdAt DateTime @default(now())
+
   @@index([userId, date]) 
 }
 
