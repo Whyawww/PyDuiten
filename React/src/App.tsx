@@ -1,7 +1,11 @@
 import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import faviconImg from './assets/favicon.png';
+
 import { MainLayout } from '../component/layout/MainLayout';
 import { Home } from './pages/Home/page';
-import faviconImg from './assets/favicon.png';
+import { Login } from './pages/Auth/Login/page';
+import { Register } from './pages/Auth/Register/page';
 
 function App() {
   useEffect(() => {
@@ -15,9 +19,18 @@ function App() {
   }, []);
 
   return (
-    <MainLayout>
-      <Home />
-    </MainLayout>
+    <Router>
+      <Routes>
+        <Route path="/" element={
+          <MainLayout>
+            <Home />
+          </MainLayout>
+        } />
+
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </Router>
   );
 }
 

@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom';
 import { Download, Rocket } from 'lucide-react';
+
 export const CTASection = () => {
     return (
         <section className="py-20 bg-white">
@@ -16,10 +18,10 @@ export const CTASection = () => {
                         </p>
 
                         <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-                            <button className="flex items-center justify-center gap-2 bg-white text-primary px-8 py-4 rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 font-bold text-lg w-full sm:w-auto active:scale-95">
+                            <Link to="register" className="flex items-center justify-center gap-2 bg-white text-primary px-8 py-4 rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 font-bold text-lg w-full sm:w-auto active:scale-95">
                                 <Rocket className="w-5 h-5" />
                                 Daftar Sekarang
-                            </button>
+                            </Link>
 
                             <button className="flex items-center justify-center gap-2 bg-primary text-white border-2 border-white/30 px-8 py-4 rounded-3xl hover:bg-white/10 hover:-translate-y-1 transition-all duration-300 font-bold text-lg w-full sm:w-auto active:scale-95">
                                 <Download className="w-5 h-5" />
