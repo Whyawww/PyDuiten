@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import faviconImg from './assets/favicon.png';
-
 import { MainLayout } from '../component/layout/MainLayout';
 import { Home } from './pages/Home/page';
 import { Login } from './pages/Auth/Login/page';

@@ -3,7 +3,7 @@ import logo from '../../src/assets/icons.png';
 
 export const Navbar = () => {
     return (
-        <nav className="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-gray-200/50">
+        <nav className="sticky pt-4 z-50 bg-surface/80 backdrop-blur-md border-b border-gray-200/50">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     <div className="flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
@@ -11,7 +11,7 @@ export const Navbar = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <a href="#" className="hidden sm:block text-gray-600 hover:text-primary font-medium transition-colors">
+                        <a href="#fitur" className="hidden sm:block text-gray-600 hover:text-primary font-medium transition-colors">
                             Fitur
                         </a>
                         <div className="w-px h-6 bg-gray-300 hidden sm:block"></div>

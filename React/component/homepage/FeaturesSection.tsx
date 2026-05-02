@@ -20,7 +20,7 @@ export const FeaturesSection = () => {
     ];
 
     return (
-        <section className="py-20 bg-white">
+        <section id="fitur" className="py-20 bg-white">
             <div className="container mx-auto px-4 max-w-7xl">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl sm:text-4xl font-black text-gray-800 mb-4 tracking-tight">

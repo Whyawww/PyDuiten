@@ -4,7 +4,6 @@ import { InputField } from '../../../../component/ui/InputField';
 import { SocialButton } from '../../../../component/ui/SocialButton';
 
 export const Register = () => {
-    // SVG Murni Google
     const GoogleIcon = (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="w-6 h-6">
             <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
@@ -15,7 +14,7 @@ export const Register = () => {
     );
 
     return (
-        <AuthLayout title="Gabung DuitAI Sekarang!" subtitle="Satu langkah lagi buat tobat finansial. Daftarin diri lu di bawah.">
+        <AuthLayout title="Gabung PyDuiten Sekarang!" subtitle="Satu langkah lagi buat tobat finansial. Daftarin diri lu di bawah.">
             <form onSubmit={(e) => e.preventDefault()} className="w-full">
                 <SocialButton icon={GoogleIcon} text="Daftar cepat dengan Google" />
 
@@ -25,7 +24,7 @@ export const Register = () => {
                     <div className="flex-1 h-px bg-gray-200"></div>
                 </div>
 
-                <InputField label="Nama Lengkap" type="text" placeholder="John Doe" icon={<User className="w-5 h-5" />} />
+                <InputField label="Nama Lengkap" type="text" placeholder="Wahyu Aji Nusantara" icon={<User className="w-5 h-5" />} />
                 <InputField label="Alamat Email" type="email" placeholder="contoh@gmail.com" icon={<Mail className="w-5 h-5" />} />
                 <InputField label="Kata Sandi" type="password" placeholder="Minimal 8 karakter" icon={<Lock className="w-5 h-5" />} />
 

@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Download, Rocket } from 'lucide-react';
+import { usePWA } from '../../src/hooks/usePWA';
 
 export const CTASection = () => {
+    const { isInstallable, installPWA } = usePWA();
+
     return (
         <section className="py-20 bg-white">
             <div className="container mx-auto px-4 max-w-5xl">
@@ -23,9 +26,16 @@ export const CTASection = () => {
                                 Daftar Sekarang
                             </Link>
 
-                            <button className="flex items-center justify-center gap-2 bg-primary text-white border-2 border-white/30 px-8 py-4 rounded-3xl hover:bg-white/10 hover:-translate-y-1 transition-all duration-300 font-bold text-lg w-full sm:w-auto active:scale-95">
+                            <button
+                                onClick={installPWA}
+                                disabled={!isInstallable}
+                                className={`flex items-center justify-center gap-2 border-2 px-8 py-4 rounded-3xl transition-all duration-300 font-bold text-lg w-full sm:w-auto active:scale-95 ${isInstallable
+                                        ? 'bg-primary text-white border-white/30 hover:bg-white/10 hover:-translate-y-1'
+                                        : 'bg-white/10 text-white/50 border-white/10 cursor-not-allowed'
+                                    }`}
+                            >
                                 <Download className="w-5 h-5" />
-                                Install PyDuiten
+                                {isInstallable ? 'Install PyDuiten' : 'Aplikasi Terpasang'}
                             </button>
                         </div>
                     </div>

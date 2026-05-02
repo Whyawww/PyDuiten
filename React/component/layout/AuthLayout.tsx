@@ -35,7 +35,7 @@ export const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
                 <div className="absolute w-[400px] h-[400px] bg-secondary/20 rounded-full blur-3xl opacity-50 bottom-10 left-10"></div>
 
                 <div className="relative z-10 text-center px-12">
-                    <img src={faviconImg} alt="Mascot" className="w-48 h-48 mx-auto mb-8 drop-shadow-2xl animate-float" />
+                    <img src={faviconImg} alt="Mascot" className="w-50 h-48 mx-auto mb-8 drop-shadow-2xl animate-float" />
                     <h2 className="text-3xl font-black text-gray-800 mb-4">Mulai Kendalikan Uang Lu.</h2>
                     <p className="text-lg text-gray-600 font-medium max-w-md mx-auto">
                         Bergabung dengan ribuan Gen Z lainnya yang udah tobat dari kebiasaan boros berkat AI.
