@@ -2,9 +2,11 @@ import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import faviconImg from './assets/favicon.png';
 import { MainLayout } from '../component/layout/MainLayout';
+import { DashboardLayout } from '../component/layout/DashboardLayout';
 import { Home } from './pages/Home/page';
 import { Login } from './pages/Auth/Login/page';
 import { Register } from './pages/Auth/Register/page';
+import { Dashboard } from './pages/Dashboard/page';
 
 function App() {
   useEffect(() => {
@@ -28,6 +30,11 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={
+          <DashboardLayout>
+            <Dashboard />
+          </DashboardLayout>
+        } />
       </Routes>
     </Router>
   );
