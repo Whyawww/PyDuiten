@@ -7,6 +7,7 @@ import { Home } from './pages/Home/page';
 import { Login } from './pages/Auth/Login/page';
 import { Register } from './pages/Auth/Register/page';
 import { Dashboard } from './pages/Dashboard/page';
+import { TransactionPage } from './pages/Transaction/page'
 
 function App() {
   useEffect(() => {
@@ -33,6 +34,12 @@ function App() {
         <Route path="/dashboard" element={
           <DashboardLayout>
             <Dashboard />
+          </DashboardLayout>
+        } />
+
+        <Route path="/transaction" element={
+          <DashboardLayout>
+            <TransactionPage />
           </DashboardLayout>
         } />
       </Routes>

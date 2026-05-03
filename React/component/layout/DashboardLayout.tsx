@@ -17,7 +17,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
     return (
         <div className="min-h-screen bg-surface flex">
-            {/* Sidebar (Desktop) */}
+            {/* Sidebar */}
             <aside className="hidden md:flex flex-col w-64 bg-white border-r border-gray-200 fixed h-full z-20">
                 <div className="p-6 flex items-center gap-3 border-b border-gray-100">
                     <img src={faviconImg} alt="Logo" className="w-8 h-8" />
@@ -54,12 +54,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </aside>
 
             {/* Main Content Area */}
-            {/* Dikasih margin left (md:ml-64) biar kontennya gak ketimpa Sidebar di PC */}
             <main className="flex-1 md:ml-64 relative pb-20 md:pb-0">
                 {children}
             </main>
 
-            {/* Bottom Navigation (Khusus Mobile) */}
+            {/* Bottom Navigation */}
             <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30 px-6 py-3 flex justify-around items-center">
                 {menuItems.map((item) => {
                     const isActive = location.pathname === item.path;
