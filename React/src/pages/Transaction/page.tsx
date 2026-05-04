@@ -1,16 +1,32 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { TransactionForm } from '../../../component/transaction/TransactionForm';
-import type { TransactionItem } from '../../../component/transaction/TransactionForm'
+import type { TransactionItem } from '../../../component/transaction/TransactionForm';
 import { TransactionHistory } from '../../../component/transaction/TransactionHistory';
 import { AIAdvisorBar } from '../../../component/transaction/AIAdvisorBar';
 import { useTransactionStore } from '../../../src/store/useTransactionStore';
 
 export const TransactionPage = () => {
+    const [editingTrx, setEditingTrx] = useState<TransactionItem | null>(null);
+
     const transactions = useTransactionStore((state) => state.transactions);
     const addTransaction = useTransactionStore((state) => state.addTransaction);
+    const deleteTransaction = useTransactionStore((state) => state.deleteTransaction);
+    const updateTransaction = useTransactionStore((state) => state.updateTransaction);
 
-    const handleAddTransaction = (newTrx: TransactionItem) => {
+    const handleAdd = (newTrx: TransactionItem) => {
         addTransaction(newTrx);
+    };
+
+    const handleUpdate = (id: string, updatedTrx: TransactionItem) => {
+        updateTransaction(id, updatedTrx);
+        setEditingTrx(null);
+    };
+
+    const handleDelete = (id: string) => {
+        if (window.confirm('Yakin mau hapus transaksi ini?')) {
+            deleteTransaction(id);
+            if (editingTrx?.id === id) setEditingTrx(null);
+        }
     };
 
     const { totalIncome, totalExpense } = useMemo(() => {
@@ -29,8 +45,18 @@ export const TransactionPage = () => {
             </div>
 
             <div className="max-w-4xl">
-                <TransactionForm onAdd={handleAddTransaction} />
-                <TransactionHistory transactions={transactions} />
+                <TransactionForm
+                    onAdd={handleAdd}
+                    editData={editingTrx}
+                    onUpdate={handleUpdate}
+                    onCancelEdit={() => setEditingTrx(null)}
+                />
+
+                <TransactionHistory
+                    transactions={transactions}
+                    onEdit={(trx) => setEditingTrx(trx)}
+                    onDelete={handleDelete}
+                />
             </div>
 
             <AIAdvisorBar income={totalIncome} expense={totalExpense} />

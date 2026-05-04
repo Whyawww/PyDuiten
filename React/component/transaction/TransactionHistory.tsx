@@ -1,8 +1,16 @@
 import { useState } from 'react';
-import { ArrowDownLeft, ArrowUpRight, Filter } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Filter, Pencil, Trash2 } from 'lucide-react'; // [NEW] Import icon
 import type { TransactionItem } from './TransactionForm';
 
-export const TransactionHistory = ({ transactions }: { transactions: TransactionItem[] }) => {
+export const TransactionHistory = ({
+    transactions,
+    onEdit,
+    onDelete
+}: {
+    transactions: TransactionItem[],
+    onEdit: (trx: TransactionItem) => void,
+    onDelete: (id: string) => void
+}) => {
     const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all');
 
     const formatRupiah = (angka: number) => {
@@ -44,7 +52,7 @@ export const TransactionHistory = ({ transactions }: { transactions: Transaction
             <div className="space-y-3">
                 {filteredTransactions.length > 0 ? (
                     filteredTransactions.map((trx) => (
-                        <div key={trx.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-2xl transition-colors border border-transparent hover:border-gray-100">
+                        <div key={trx.id} className="group flex items-center justify-between p-3 hover:bg-gray-50 rounded-2xl transition-all duration-300 border border-transparent hover:border-gray-100 relative overflow-hidden">
                             <div className="flex items-center gap-4">
                                 <div className={`p-2.5 rounded-xl ${trx.type === 'income' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-500'}`}>
                                     {trx.type === 'income' ? <ArrowDownLeft className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
@@ -54,9 +62,21 @@ export const TransactionHistory = ({ transactions }: { transactions: Transaction
                                     <p className="text-xs text-gray-400">{new Date(trx.date).toLocaleDateString('id-ID')}</p>
                                 </div>
                             </div>
-                            <p className={`font-bold ${trx.type === 'income' ? 'text-green-600' : 'text-gray-800'}`}>
-                                {trx.type === 'income' ? '+' : '-'}{formatRupiah(trx.amount)}
-                            </p>
+
+                            <div className="flex items-center gap-4">
+                                <p className={`font-bold ${trx.type === 'income' ? 'text-green-600' : 'text-gray-800'} transition-transform duration-300 group-hover:-translate-x-2`}>
+                                    {trx.type === 'income' ? '+' : '-'}{formatRupiah(trx.amount)}
+                                </p>
+
+                                <div className="absolute right-3 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-300 flex items-center gap-1 bg-white pl-2">
+                                    <button onClick={() => onEdit(trx)} className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-colors">
+                                        <Pencil className="w-4 h-4" />
+                                    </button>
+                                    <button onClick={() => onDelete(trx.id)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors">
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     ))
                 ) : (
