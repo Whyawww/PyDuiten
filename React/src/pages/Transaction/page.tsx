@@ -1,14 +1,16 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { TransactionForm } from '../../../component/transaction/TransactionForm';
 import type { TransactionItem } from '../../../component/transaction/TransactionForm'
 import { TransactionHistory } from '../../../component/transaction/TransactionHistory';
 import { AIAdvisorBar } from '../../../component/transaction/AIAdvisorBar';
+import { useTransactionStore } from '../../../src/store/useTransactionStore';
 
 export const TransactionPage = () => {
-    const [transactions, setTransactions] = useState<TransactionItem[]>([]);
+    const transactions = useTransactionStore((state) => state.transactions);
+    const addTransaction = useTransactionStore((state) => state.addTransaction);
 
     const handleAddTransaction = (newTrx: TransactionItem) => {
-        setTransactions([newTrx, ...transactions]);
+        addTransaction(newTrx);
     };
 
     const { totalIncome, totalExpense } = useMemo(() => {

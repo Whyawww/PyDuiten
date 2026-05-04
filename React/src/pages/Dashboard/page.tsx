@@ -1,14 +1,21 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Wallet, TrendingUp, TrendingDown, Filter } from 'lucide-react';
+import { useTransactionStore } from '../../../src/store/useTransactionStore';
 
 export const Dashboard = () => {
     const [filter, setFilter] = useState('Bulan Ini');
 
-    const summaryData = {
-        saldo: 4500000,
-        pemasukan: 8000000,
-        pengeluaran: 3500000,
-    };
+    const transactions = useTransactionStore((state) => state.transactions);
+
+    const summaryData = useMemo(() => {
+        return transactions.reduce((acc, curr) => {
+            if (curr.type === 'income') acc.pemasukan += curr.amount;
+            else acc.pengeluaran += curr.amount;
+
+            acc.saldo = acc.pemasukan - acc.pengeluaran;
+            return acc;
+        }, { saldo: 0, pemasukan: 0, pengeluaran: 0 });
+    }, [transactions]);
 
     const formatRupiah = (angka: number) => {
         return new Intl.NumberFormat('id-ID', {
