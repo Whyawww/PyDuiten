@@ -7,17 +7,44 @@ import { SummaryCards } from '../../../component/dashboard/SummaryCards';
 
 export const Dashboard = () => {
     const [filter, setFilter] = useState('Bulan Ini');
-    const transactions = useTransactionStore((state) => state.transactions);
+
+    const allTransactions = useTransactionStore((state) => state.transactions);
+
+    const filteredTransactions = useMemo(() => {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+
+        return allTransactions.filter(trx => {
+            const trxDate = new Date(trx.date);
+            trxDate.setHours(0, 0, 0, 0);
+
+            const diffTime = Math.abs(now.getTime() - trxDate.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            switch (filter) {
+                case 'Minggu Ini':
+                    return diffDays <= 7;
+                case 'Bulan Ini':
+                    return diffDays <= 30;
+                case '3 Bulan':
+                    return diffDays <= 90;
+                case 'Tahun Ini':
+                    return trxDate.getFullYear() === now.getFullYear();
+                default:
+                    return true;
+            }
+        });
+    }, [allTransactions, filter]);
 
     const summaryData = useMemo(() => {
-        return transactions.reduce((acc, curr) => {
+        return filteredTransactions.reduce((acc, curr) => {
             if (curr.type === 'income') acc.pemasukan += curr.amount;
             else acc.pengeluaran += curr.amount;
 
             acc.saldo = acc.pemasukan - acc.pengeluaran;
             return acc;
         }, { saldo: 0, pemasukan: 0, pengeluaran: 0 });
-    }, [transactions]);
+    }, [filteredTransactions]);
 
     return (
         <div className="p-6 md:p-8 animate-fade-in">
@@ -47,8 +74,8 @@ export const Dashboard = () => {
             <SummaryCards data={summaryData} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <CashFlowChart transactions={transactions} />
-                <RecentTransactions transactions={transactions} />
+                <CashFlowChart transactions={filteredTransactions} />
+                <RecentTransactions transactions={filteredTransactions} />
             </div>
         </div>
     );
