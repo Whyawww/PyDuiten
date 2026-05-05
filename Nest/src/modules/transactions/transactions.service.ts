@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateTransactionDto } from '../auth/dto/create-transaction.dto';
 import { AiService } from '../ai/ai.service';
+import { PartialType } from '@nestjs/mapped-types';
+
+export class UpdateTransactionDto extends PartialType(CreateTransactionDto) {}
 
 @Injectable()
 export class TransactionsService {
@@ -11,22 +14,19 @@ export class TransactionsService {
   ) {}
 
   async createTransaction(userId: string, dto: CreateTransactionDto) {
-    let category = await this.prisma.category.findFirst({
-      where: {
-        name: dto.categoryName,
-        userId: userId,
-        type: dto.type,
-      },
-    });
+    let categoryId: string | undefined = undefined;
 
-    if (!category) {
-      category = await this.prisma.category.create({
-        data: {
-          name: dto.categoryName,
-          type: dto.type,
-          userId: userId,
-        },
+    if (dto.categoryName) {
+      let category = await this.prisma.category.findFirst({
+        where: { name: dto.categoryName, userId: userId, type: dto.type },
       });
+
+      if (!category) {
+        category = await this.prisma.category.create({
+          data: { name: dto.categoryName, type: dto.type, userId: userId },
+        });
+      }
+      categoryId = category.id;
     }
 
     const transaction = await this.prisma.transaction.create({
@@ -34,16 +34,16 @@ export class TransactionsService {
         amount: dto.amount,
         type: dto.type,
         description: dto.description || '',
-        categoryId: category.id,
+        categoryId: categoryId,
         userId: userId,
       },
       select: {
         id: true,
         amount: true,
         type: true,
-        category: {
-          select: { name: true },
-        },
+        description: true,
+        date: true,
+        category: { select: { name: true } },
       },
     });
 
@@ -52,6 +52,44 @@ export class TransactionsService {
       message: 'Transaksi berhasil dicatat, cuy!',
       data: transaction,
     };
+  }
+
+  async findAll(userId: string) {
+    return this.prisma.transaction.findMany({
+      where: { userId },
+      orderBy: { date: 'desc' },
+    });
+  }
+
+  async updateTransaction(
+    userId: string,
+    transactionId: string,
+    dto: UpdateTransactionDto,
+  ) {
+    const existing = await this.prisma.transaction.findFirst({
+      where: { id: transactionId, userId },
+    });
+    if (!existing) throw new NotFoundException('Transaksi nggak ketemu, cuy!');
+
+    return this.prisma.transaction.update({
+      where: { id: transactionId },
+      data: {
+        amount: dto.amount,
+        type: dto.type,
+        description: dto.description,
+      },
+    });
+  }
+
+  async deleteTransaction(userId: string, transactionId: string) {
+    const existing = await this.prisma.transaction.findFirst({
+      where: { id: transactionId, userId },
+    });
+    if (!existing) throw new NotFoundException('Transaksi nggak ketemu, cuy!');
+
+    return this.prisma.transaction.delete({
+      where: { id: transactionId },
+    });
   }
 
   async getSummary(userId: string) {

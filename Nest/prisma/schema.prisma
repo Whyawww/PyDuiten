@@ -37,8 +37,8 @@ model Transaction {
   type        TransactionType
   date        DateTime @default(now())
   
-  categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
   
   userId      String
   user        User     @relation(fields: [userId], references: [id])
