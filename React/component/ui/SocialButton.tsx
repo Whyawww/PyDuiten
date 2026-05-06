@@ -1,4 +1,4 @@
-
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 interface SocialButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     icon: ReactNode;

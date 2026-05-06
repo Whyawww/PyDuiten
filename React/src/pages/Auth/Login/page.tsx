@@ -1,9 +1,65 @@
-import { Mail, Lock } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Mail, Lock, Loader2 } from 'lucide-react';
 import { AuthLayout } from '../../../../component/layout/AuthLayout';
 import { InputField } from '../../../../component/ui/InputField';
 import { SocialButton } from '../../../../component/ui/SocialButton';
+import { apiFetch, ApiError } from '../../../utils/api';
+import { useAuthStore } from '../../../store/useAuthStore';
 
 export const Login = () => {
+    const navigate = useNavigate();
+    const loginStore = useAuthStore((state) => state.login);
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setErrorMsg('');
+
+        if (!email || !password) {
+            setErrorMsg('Email dan password wajib diisi coy!');
+            return;
+        }
+
+        setIsLoading(true);
+
+        try {
+            const response = await apiFetch<{
+                status: string;
+                message: string;
+                data: { accessToken: string };
+            }>('/auth/login', {
+                method: 'POST',
+                body: JSON.stringify({ email, password }),
+            });
+
+            const userData = {
+                id: '123',
+                email: email,
+                name: 'Bro',
+            };
+
+            loginStore(userData, response.data.accessToken);
+
+            navigate('/dashboard');
+        } catch (error: unknown) {
+            if (error instanceof ApiError) {
+                setErrorMsg(error.message);
+            } else if (error instanceof Error) {
+                setErrorMsg(error.message);
+            } else {
+                setErrorMsg('Terjadi kesalahan yang tidak diketahui.');
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const GoogleIcon = (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="w-6 h-6">
             <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
@@ -15,8 +71,8 @@ export const Login = () => {
 
     return (
         <AuthLayout title="Welcome Back, Cuy!" subtitle="Masukin kredensial lu buat ngelihat seberapa boros lu bulan ini.">
-            <form onSubmit={(e) => e.preventDefault()} className="w-full">
-                <SocialButton icon={GoogleIcon} text="Lanjut dengan Google" />
+            <form onSubmit={handleLogin} className="w-full">
+                <SocialButton icon={GoogleIcon} text="Lanjut dengan Google" type="button" />
 
                 <div className="flex items-center gap-4 my-6">
                     <div className="flex-1 h-px bg-gray-200"></div>
@@ -24,15 +80,40 @@ export const Login = () => {
                     <div className="flex-1 h-px bg-gray-200"></div>
                 </div>
 
-                <InputField label="Alamat Email" type="email" placeholder="contoh@gmail.com" icon={<Mail className="w-5 h-5" />} />
-                <InputField label="Kata Sandi" type="password" placeholder="••••••••" icon={<Lock className="w-5 h-5" />} />
+                {errorMsg && (
+                    <div className="bg-red-50 text-red-500 p-3 rounded-xl mb-4 text-sm font-medium text-center">
+                        {errorMsg}
+                    </div>
+                )}
+
+                <InputField
+                    label="Alamat Email"
+                    type="email"
+                    placeholder="email@gmail.com"
+                    icon={<Mail className="w-5 h-5" />}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+                <InputField
+                    label="Kata Sandi"
+                    type="password"
+                    placeholder="••••••••"
+                    icon={<Lock className="w-5 h-5" />}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
 
                 <div className="flex justify-end mb-6">
                     <a href="#" className="text-sm font-bold text-primary hover:text-secondary transition-colors">Lupa sandi?</a>
                 </div>
 
-                <button className="w-full bg-primary text-white font-bold px-6 py-4 rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 active:scale-95 mb-6">
-                    Masuk Sekarang
+                <button
+                    type="submit"
+                    disabled={isLoading}
+                    className={`flex justify-center items-center gap-2 w-full text-white font-bold px-6 py-4 rounded-2xl shadow-md transition-all duration-300 mb-6 ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary hover:shadow-lg hover:-translate-y-1 active:scale-95'
+                        }`}
+                >
+                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Masuk Sekarang'}
                 </button>
 
                 <p className="text-center text-gray-600 font-medium">
