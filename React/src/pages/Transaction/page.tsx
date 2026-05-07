@@ -73,7 +73,7 @@ export const TransactionPage = () => {
             <ConfirmModal
                 isOpen={deleteId !== null}
                 title="Hapus Transaksi?"
-                message="Yakin mau hapus data ini? Kalau udah dihapus, datanya bakal hilang permanen dari server dan nggak bisa dibalikin lagi lho."
+                message="Yakin mau hapus data ini? Kalau udah dihapus, datanya bakal hilang permanen dari server dan nggak bisa dibalikin lagi cuy."
                 onConfirm={executeDelete}
                 onCancel={() => setDeleteId(null)}
                 isLoading={isDeleting}

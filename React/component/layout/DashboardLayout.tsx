@@ -1,8 +1,10 @@
 import { useState, useCallback } from 'react';
 import type { ReactNode } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Receipt, LogOut, Menu, ChevronLeft } from 'lucide-react';
 import faviconImg from '../../src/assets/favicon.png';
+import { useAuthStore } from '../../src/store/useAuthStore';
+import { ConfirmModal } from '../transaction/ConfirmModal';
 
 interface DashboardLayoutProps {
     children: ReactNode;
@@ -15,13 +17,30 @@ const menuItems = [
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const logout = useAuthStore((state) => state.logout);
+
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
     const open = useCallback(() => setIsSidebarOpen(true), []);
     const close = useCallback(() => setIsSidebarOpen(false), []);
 
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
+
     return (
         <div className="min-h-screen bg-surface flex overflow-hidden">
+            <ConfirmModal
+                isOpen={isLogoutModalOpen}
+                title="Yakin Mau Keluar?"
+                message="Sesi lu bakal berakhir cuy. Lu harus masukin email dan password lagi buat masuk ke aplikasi."
+                onConfirm={handleLogout}
+                onCancel={() => setIsLogoutModalOpen(false)}
+                confirmText="Keluar"
+            />
 
             <div
                 onClick={close}
@@ -92,8 +111,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 </nav>
 
                 <div className="p-4 border-t border-gray-100">
-                    <button className="flex items-center gap-3 px-4 py-3 w-full rounded-xl font-medium
-                        text-red-500 hover:bg-red-50 transition-all duration-200 whitespace-nowrap group">
+                    <button
+                        onClick={() => setIsLogoutModalOpen(true)}
+                        className="flex items-center gap-3 px-4 py-3 w-full rounded-xl font-medium
+                        text-red-500 hover:bg-red-50 transition-all duration-200 whitespace-nowrap group"
+                    >
                         <LogOut className="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:-translate-x-0.5" />
                         Keluar
                     </button>
