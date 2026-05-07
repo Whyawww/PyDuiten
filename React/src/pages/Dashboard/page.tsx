@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Filter } from 'lucide-react';
+import { useMemo, useState, useEffect } from 'react';
+import { Filter, Loader2 } from 'lucide-react';
 import { useTransactionStore } from '../../store/useTransactionStore';
 import { CashFlowChart } from '../../../component/dashboard/CashFlowChart';
 import { RecentTransactions } from '../../../component/dashboard/RecentTransactions';
@@ -9,6 +9,12 @@ export const Dashboard = () => {
     const [filter, setFilter] = useState('Bulan Ini');
 
     const allTransactions = useTransactionStore((state) => state.transactions);
+    const fetchTransactions = useTransactionStore((state) => state.fetchTransactions);
+    const isLoading = useTransactionStore((state) => state.isLoading);
+
+    useEffect(() => {
+        fetchTransactions();
+    }, [fetchTransactions]);
 
     const filteredTransactions = useMemo(() => {
         const now = new Date();
@@ -50,7 +56,10 @@ export const Dashboard = () => {
         <div className="p-6 md:p-8 animate-fade-in">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-black text-gray-800 tracking-tight">Ringkasan Keuangan</h1>
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-2xl sm:text-3xl font-black text-gray-800 tracking-tight">Ringkasan Keuangan</h1>
+                        {isLoading && <Loader2 className="w-5 h-5 animate-spin text-primary" />}
+                    </div>
                     <p className="text-gray-500 font-medium mt-1">Pantau terus duit lu biar nggak boncos.</p>
                 </div>
 
@@ -61,6 +70,7 @@ export const Dashboard = () => {
                             value={filter}
                             onChange={(e) => setFilter(e.target.value)}
                             className="bg-transparent text-sm font-semibold text-gray-700 outline-none cursor-pointer appearance-none pr-4"
+                            disabled={isLoading}
                         >
                             <option value="Minggu Ini">Minggu Ini</option>
                             <option value="Bulan Ini">Bulan Ini</option>
