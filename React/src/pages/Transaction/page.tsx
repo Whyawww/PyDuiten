@@ -1,13 +1,17 @@
 import { useMemo, useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react'; 
+import { Loader2 } from 'lucide-react';
 import { TransactionForm } from '../../../component/transaction/TransactionForm';
 import type { TransactionItem } from '../../../component/transaction/TransactionForm';
 import { TransactionHistory } from '../../../component/transaction/TransactionHistory';
 import { AIAdvisorBar } from '../../../component/transaction/AIAdvisorBar';
+import { ConfirmModal } from '../../../component/transaction/ConfirmModal';
 import { useTransactionStore } from '../../../src/store/useTransactionStore';
 
 export const TransactionPage = () => {
     const [editingTrx, setEditingTrx] = useState<TransactionItem | null>(null);
+
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const transactions = useTransactionStore((state) => state.transactions);
     const isLoading = useTransactionStore((state) => state.isLoading);
@@ -37,14 +41,22 @@ export const TransactionPage = () => {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (window.confirm('Yakin mau hapus transaksi ini? Data bakal hilang dari server lho!')) {
-            try {
-                await deleteTransaction(id);
-                if (editingTrx?.id === id) setEditingTrx(null);
-            } catch (error) {
-                console.error("Gagal hapus transaksi:", error);
-            }
+    const handleDeleteClick = (id: string) => {
+        setDeleteId(id);
+    };
+
+    const executeDelete = async () => {
+        if (!deleteId) return;
+
+        setIsDeleting(true);
+        try {
+            await deleteTransaction(deleteId);
+            if (editingTrx?.id === deleteId) setEditingTrx(null);
+        } catch (error) {
+            console.error("Gagal hapus transaksi:", error);
+        } finally {
+            setIsDeleting(false);
+            setDeleteId(null);
         }
     };
 
@@ -58,6 +70,15 @@ export const TransactionPage = () => {
 
     return (
         <div className="p-6 md:p-8 animate-fade-in relative pb-32 md:pb-24 min-h-screen">
+            <ConfirmModal
+                isOpen={deleteId !== null}
+                title="Hapus Transaksi?"
+                message="Yakin mau hapus data ini? Kalau udah dihapus, datanya bakal hilang permanen dari server dan nggak bisa dibalikin lagi lho."
+                onConfirm={executeDelete}
+                onCancel={() => setDeleteId(null)}
+                isLoading={isDeleting}
+            />
+
             <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-3">
@@ -79,7 +100,7 @@ export const TransactionPage = () => {
                 <TransactionHistory
                     transactions={transactions}
                     onEdit={(trx) => setEditingTrx(trx)}
-                    onDelete={handleDelete}
+                    onDelete={handleDeleteClick}
                 />
             </div>
 
