@@ -4,6 +4,7 @@ import { useTransactionStore } from '../../store/useTransactionStore';
 import { CashFlowChart } from '../../../component/dashboard/CashFlowChart';
 import { RecentTransactions } from '../../../component/dashboard/RecentTransactions';
 import { SummaryCards } from '../../../component/dashboard/SummaryCards';
+import { CategoryPieChart } from '../../../component/dashboard/CategoryPieChart';
 
 export const Dashboard = () => {
     const [filter, setFilter] = useState('Bulan Ini');
@@ -86,6 +87,10 @@ export const Dashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <CashFlowChart transactions={filteredTransactions} />
                 <RecentTransactions transactions={filteredTransactions} />
+            </div>
+
+            <div className="pt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <CategoryPieChart transactions={filteredTransactions} />
             </div>
         </div>
     );
