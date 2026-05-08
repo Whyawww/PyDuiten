@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useCallback } from 'react';
-import { PlusCircle, MinusCircle, Check, X } from 'lucide-react';
+import { PlusCircle, MinusCircle, Check, X, Tag } from 'lucide-react';
 
 export interface TransactionItem {
     id: string;
@@ -7,6 +7,7 @@ export interface TransactionItem {
     amount: number;
     note: string;
     date: string;
+    category?: string;
 }
 
 interface FormProps {
@@ -20,29 +21,49 @@ interface FormState {
     type: 'income' | 'expense';
     amount: string;
     note: string;
+    category: string;
 }
+
+const EXPENSE_CATEGORIES = [
+    'Makanan & Minuman', 'Transportasi', 'Listrik', 'Air PDAM',
+    'Pulsa & Kuota', 'Hiburan', 'Belanja', 'Kesehatan',
+    'Pendidikan', 'Cicilan', 'Lainnya'
+];
+
+const INCOME_CATEGORIES = [
+    'Gaji', 'Bonus', 'Hasil Usaha', 'Investasi',
+    'Pemberian/Hadiah', 'Lainnya'
+];
 
 const INITIAL_FORM: FormState = {
     type: 'expense',
     amount: '',
     note: '',
+    category: EXPENSE_CATEGORIES[0],
 };
 
 type FormAction =
     | { type: 'SET_TYPE'; payload: 'income' | 'expense' }
     | { type: 'SET_AMOUNT'; payload: string }
     | { type: 'SET_NOTE'; payload: string }
+    | { type: 'SET_CATEGORY'; payload: string }
     | { type: 'POPULATE'; payload: FormState }
     | { type: 'RESET' };
 
 const formReducer = (state: FormState, action: FormAction): FormState => {
     switch (action.type) {
-        case 'SET_TYPE':   return { ...state, type: action.payload };
+        case 'SET_TYPE':
+            return {
+                ...state,
+                type: action.payload,
+                category: action.payload === 'expense' ? EXPENSE_CATEGORIES[0] : INCOME_CATEGORIES[0]
+            };
         case 'SET_AMOUNT': return { ...state, amount: action.payload };
-        case 'SET_NOTE':   return { ...state, note: action.payload };
-        case 'POPULATE':   return action.payload;
-        case 'RESET':      return INITIAL_FORM;
-        default:           return state;
+        case 'SET_NOTE': return { ...state, note: action.payload };
+        case 'SET_CATEGORY': return { ...state, category: action.payload };
+        case 'POPULATE': return action.payload;
+        case 'RESET': return INITIAL_FORM;
+        default: return state;
     }
 };
 
@@ -62,13 +83,14 @@ export const TransactionForm = ({ onAdd, editData, onUpdate, onCancelEdit }: For
                     type: editData.type,
                     amount: String(editData.amount),
                     note: editData.note,
+                    category: editData.category || (editData.type === 'expense' ? 'Lainnya' : 'Lainnya'),
                 },
             });
         }, 10);
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return () => clearTimeout(timer);
-    }, [editData]); // ✅ ESLint happy, dispatch stabil secara referensi
+    }, [editData]);
 
     const handleAmountChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const raw = e.target.value.replace(/[^0-9]/g, '');
@@ -85,6 +107,7 @@ export const TransactionForm = ({ onAdd, editData, onUpdate, onCancelEdit }: For
             amount: Number(form.amount),
             note: form.note,
             date: editData?.date ?? new Date().toISOString(),
+            category: form.category,
         };
 
         if (editData && onUpdate) {
@@ -101,9 +124,8 @@ export const TransactionForm = ({ onAdd, editData, onUpdate, onCancelEdit }: For
         onCancelEdit?.();
     }, [onCancelEdit]);
 
-    const displayAmount = form.amount
-        ? new Intl.NumberFormat('id-ID').format(Number(form.amount))
-        : '';
+    const displayAmount = form.amount ? new Intl.NumberFormat('id-ID').format(Number(form.amount)) : '';
+    const currentCategories = form.type === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
 
     return (
         <div className={`bg-white rounded-3xl p-6 shadow-sm border mb-6 transition-all duration-300 ${editData ? 'border-blue-400 ring-4 ring-blue-50' : 'border-gray-100'}`}>
@@ -148,16 +170,33 @@ export const TransactionForm = ({ onAdd, editData, onUpdate, onCancelEdit }: For
                             className="bg-surface/50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                         />
                     </div>
+
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs font-semibold text-gray-500 ml-1">Keterangan</label>
-                        <input
-                            type="text"
-                            value={form.note}
-                            onChange={(e) => dispatch({ type: 'SET_NOTE', payload: e.target.value })}
-                            placeholder="Contoh: Beli Kopi"
-                            className="bg-surface/50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                        />
+                        <label className="text-xs font-semibold text-gray-500 ml-1">Kategori</label>
+                        <div className="relative flex items-center">
+                            <Tag className="absolute left-4 text-gray-400 w-4 h-4" />
+                            <select
+                                value={form.category}
+                                onChange={(e) => dispatch({ type: 'SET_CATEGORY', payload: e.target.value })}
+                                className="w-full bg-surface/50 border border-gray-200 text-gray-800 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all appearance-none font-medium"
+                            >
+                                {currentCategories.map(cat => (
+                                    <option key={cat} value={cat}>{cat}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-semibold text-gray-500 ml-1">Keterangan (Catatan)</label>
+                    <input
+                        type="text"
+                        value={form.note}
+                        onChange={(e) => dispatch({ type: 'SET_NOTE', payload: e.target.value })}
+                        placeholder="Contoh: Makan siang di warkop"
+                        className="bg-surface/50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                    />
                 </div>
 
                 <button

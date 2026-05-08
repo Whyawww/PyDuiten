@@ -59,7 +59,14 @@ export const TransactionHistory = ({
                                 </div>
                                 <div>
                                     <p className="font-bold text-gray-800">{trx.note}</p>
-                                    <p className="text-xs text-gray-400">{new Date(trx.date).toLocaleDateString('id-ID')}</p>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                        <span className="text-[10px] font-bold px-2 py-0.5 bg-primary/10 text-primary rounded-md">
+                                            {trx.category || 'Lainnya'}
+                                        </span>
+                                        <p className="text-xs text-gray-400 border-l border-gray-200 pl-2">
+                                            {new Date(trx.date).toLocaleDateString('id-ID')}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 

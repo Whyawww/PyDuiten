@@ -8,6 +8,7 @@ interface ApiTransactionResponse {
   type: "INCOME" | "EXPENSE";
   description: string | null;
   date: string;
+  category: { name: string } | null;
 }
 
 interface TransactionState {
@@ -34,6 +35,7 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
         amount: Number(item.amount),
         note: item.description || "",
         date: item.date,
+        category: item.category?.name || "Lainnya",
       }));
 
       set({ transactions: mappedData, isLoading: false });
@@ -51,6 +53,7 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
           amount: newTrx.amount,
           type: newTrx.type.toUpperCase(),
           description: newTrx.note,
+          categoryName: newTrx.category,
         }),
       });
 
@@ -69,6 +72,7 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
           amount: updatedTrx.amount,
           type: updatedTrx.type.toUpperCase(),
           description: updatedTrx.note,
+          categoryName: updatedTrx.category,
         }),
       });
       await get().fetchTransactions();

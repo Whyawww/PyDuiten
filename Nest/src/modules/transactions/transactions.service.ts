@@ -58,6 +58,13 @@ export class TransactionsService {
     return this.prisma.transaction.findMany({
       where: { userId },
       orderBy: { date: 'desc' },
+      include: {
+        category: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
   }
 
@@ -71,12 +78,37 @@ export class TransactionsService {
     });
     if (!existing) throw new NotFoundException('Transaksi nggak ketemu, cuy!');
 
+    let newCategoryId = existing.categoryId;
+
+    if (dto.categoryName) {
+      let category = await this.prisma.category.findFirst({
+        where: {
+          name: dto.categoryName,
+          userId: userId,
+          type: dto.type || existing.type,
+        },
+      });
+
+      if (!category) {
+        category = await this.prisma.category.create({
+          data: {
+            name: dto.categoryName,
+            type: dto.type || existing.type,
+            userId: userId,
+          },
+        });
+      }
+
+      newCategoryId = category.id;
+    }
+
     return this.prisma.transaction.update({
       where: { id: transactionId },
       data: {
         amount: dto.amount,
         type: dto.type,
         description: dto.description,
+        categoryId: newCategoryId,
       },
     });
   }
