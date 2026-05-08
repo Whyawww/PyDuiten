@@ -5,6 +5,7 @@ import { AuthLayout } from '../../../../component/layout/AuthLayout';
 import { InputField } from '../../../../component/ui/InputField';
 import { SocialButton } from '../../../../component/ui/SocialButton';
 import { apiFetch, ApiError } from '../../../utils/api';
+import { ConfirmModal } from '../../../../component/transaction/ConfirmModal';
 
 export const Register = () => {
     const navigate = useNavigate();
@@ -17,6 +18,8 @@ export const Register = () => {
     // State UI
     const [isLoading, setIsLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
+
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,8 +43,8 @@ export const Register = () => {
                 body: JSON.stringify({ name, email, password }),
             });
 
-            alert('Register sukses! Silahkan login.');
-            navigate('/login');
+            setShowSuccessModal(true);
+
         } catch (error: unknown) {
             if (error instanceof ApiError) {
                 setErrorMsg(error.message);
@@ -55,6 +58,11 @@ export const Register = () => {
         }
     };
 
+    const handleSuccessConfirm = () => {
+        setShowSuccessModal(false);
+        navigate('/login');
+    };
+
     const GoogleIcon = (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="w-6 h-6">
             <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
@@ -66,6 +74,17 @@ export const Register = () => {
 
     return (
         <AuthLayout title="Gabung PyDuiten Sekarang!" subtitle="Satu langkah lagi buat tobat finansial. Daftarin diri lu di bawah.">
+
+            <ConfirmModal
+                isOpen={showSuccessModal}
+                type="success"
+                title="Pendaftaran Berhasil!"
+                message="Akun lu udah aktif dan siap dipakai buat nyatet keuangan. Gas login sekarang bro!"
+                confirmText="Lanjut Login"
+                onConfirm={handleSuccessConfirm}
+            // Perhatikan: onCancel ga kita lempar, jadi tombol "Batal" ga bakal dirender.
+            />
+
             <form onSubmit={handleRegister} className="w-full">
                 <SocialButton icon={GoogleIcon} text="Daftar cepat dengan Google" type="button" />
 
