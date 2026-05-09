@@ -6,6 +6,7 @@ import { InputField } from '../../../../component/ui/InputField';
 import { SocialButton } from '../../../../component/ui/SocialButton';
 import { apiFetch, ApiError } from '../../../utils/api';
 import { useAuthStore } from '../../../store/useAuthStore';
+import { WelcomeOverlay } from '../../../../component/ui/WelcomeOverlay';
 
 export const Login = () => {
     const navigate = useNavigate();
@@ -16,6 +17,8 @@ export const Login = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
+    const [showWelcome, setShowWelcome] = useState(false);
+    const [userName, setUserName] = useState('');
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -32,21 +35,20 @@ export const Login = () => {
             const response = await apiFetch<{
                 status: string;
                 message: string;
-                data: { accessToken: string };
+                data: {
+                    accessToken: string;
+                    user: { id: string; email: string; name: string; phone?: string; photo?: string; }
+                };
             }>('/auth/login', {
                 method: 'POST',
                 body: JSON.stringify({ email, password }),
             });
 
-            const userData = {
-                id: '123',
-                email: email,
-                name: 'Bro',
-            };
+            loginStore(response.data.user, response.data.accessToken);
+            setUserName(response.data.user.name);
 
-            loginStore(userData, response.data.accessToken);
+            setShowWelcome(true);
 
-            navigate('/dashboard');
         } catch (error: unknown) {
             if (error instanceof ApiError) {
                 setErrorMsg(error.message);
@@ -70,56 +72,64 @@ export const Login = () => {
     );
 
     return (
-        <AuthLayout title="Welcome Back, Cuy!" subtitle="Masukin kredensial lu buat ngelihat seberapa boros lu bulan ini.">
-            <form onSubmit={handleLogin} className="w-full">
-                <SocialButton icon={GoogleIcon} text="Lanjut dengan Google" type="button" />
+        <>
+            {showWelcome && (
+                <WelcomeOverlay
+                    username={userName}
+                    onDone={() => navigate('/dashboard')}
+                />
+            )}
+            <AuthLayout title="Welcome Back, Cuy!" subtitle="Masukin kredensial lu buat ngelihat seberapa boros lu bulan ini.">
+                <form onSubmit={handleLogin} className="w-full">
+                    <SocialButton icon={GoogleIcon} text="Lanjut dengan Google" type="button" />
 
-                <div className="flex items-center gap-4 my-6">
-                    <div className="flex-1 h-px bg-gray-200"></div>
-                    <span className="text-sm font-medium text-gray-400">ATAU</span>
-                    <div className="flex-1 h-px bg-gray-200"></div>
-                </div>
-
-                {errorMsg && (
-                    <div className="bg-red-50 text-red-500 p-3 rounded-xl mb-4 text-sm font-medium text-center">
-                        {errorMsg}
+                    <div className="flex items-center gap-4 my-6">
+                        <div className="flex-1 h-px bg-gray-200"></div>
+                        <span className="text-sm font-medium text-gray-400">ATAU</span>
+                        <div className="flex-1 h-px bg-gray-200"></div>
                     </div>
-                )}
 
-                <InputField
-                    label="Alamat Email"
-                    type="email"
-                    placeholder="email@gmail.com"
-                    icon={<Mail className="w-5 h-5" />}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <InputField
-                    label="Kata Sandi"
-                    type="password"
-                    placeholder="••••••••"
-                    icon={<Lock className="w-5 h-5" />}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                    {errorMsg && (
+                        <div className="bg-red-50 text-red-500 p-3 rounded-xl mb-4 text-sm font-medium text-center">
+                            {errorMsg}
+                        </div>
+                    )}
 
-                <div className="flex justify-end mb-6">
-                    <a href="#" className="text-sm font-bold text-primary hover:text-secondary transition-colors">Lupa sandi?</a>
-                </div>
+                    <InputField
+                        label="Alamat Email"
+                        type="email"
+                        placeholder="email@gmail.com"
+                        icon={<Mail className="w-5 h-5" />}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <InputField
+                        label="Kata Sandi"
+                        type="password"
+                        placeholder="••••••••"
+                        icon={<Lock className="w-5 h-5" />}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
 
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className={`flex justify-center items-center gap-2 w-full text-white font-bold px-6 py-4 rounded-2xl shadow-md transition-all duration-300 mb-6 ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary hover:shadow-lg hover:-translate-y-1 active:scale-95'
-                        }`}
-                >
-                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Masuk Sekarang'}
-                </button>
+                    <div className="flex justify-end mb-6">
+                        <a href="#" className="text-sm font-bold text-primary hover:text-secondary transition-colors">Lupa sandi?</a>
+                    </div>
 
-                <p className="text-center text-gray-600 font-medium">
-                    Belum punya akun? <a href="/register" className="text-primary font-bold hover:underline">Daftar dulu sini</a>
-                </p>
-            </form>
-        </AuthLayout>
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className={`flex justify-center items-center gap-2 w-full text-white font-bold px-6 py-4 rounded-2xl shadow-md transition-all duration-300 mb-6 ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary hover:shadow-lg hover:-translate-y-1 active:scale-95'
+                            }`}
+                    >
+                        {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Masuk Sekarang'}
+                    </button>
+
+                    <p className="text-center text-gray-600 font-medium">
+                        Belum punya akun? <a href="/register" className="text-primary font-bold hover:underline">Daftar dulu sini</a>
+                    </p>
+                </form>
+            </AuthLayout>
+        </>
     );
 };

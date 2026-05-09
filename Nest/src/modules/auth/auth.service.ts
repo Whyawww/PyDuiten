@@ -35,6 +35,13 @@ export class AuthService {
       message: 'Login berhasil',
       data: {
         accessToken: await this.jwtService.signAsync(payload),
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          photo: user.photo,
+        },
       },
     };
   }
