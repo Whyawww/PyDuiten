@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Receipt, LogOut, Menu, ChevronLeft } from 'lucide-react';
+import { LayoutDashboard, Receipt, LogOut, Menu, ChevronLeft, UserCircle } from 'lucide-react';
 import faviconImg from '../../src/assets/favicon.png';
 import { useAuthStore } from '../../src/store/useAuthStore';
 import { ConfirmModal } from '../transaction/ConfirmModal';
@@ -13,6 +13,7 @@ interface DashboardLayoutProps {
 const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { name: 'Transaksi', icon: Receipt, path: '/transaction' },
+    { name: 'Profil', icon: UserCircle, path: '/profile' },
 ];
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {

@@ -8,6 +8,7 @@ import { Login } from './pages/Auth/Login/page';
 import { Register } from './pages/Auth/Register/page';
 import { Dashboard } from './pages/Dashboard/page';
 import { TransactionPage } from './pages/Transaction/page'
+import { ProfilePage } from './pages/Profile/page';
 
 function App() {
   useEffect(() => {
@@ -42,6 +43,14 @@ function App() {
             <TransactionPage />
           </DashboardLayout>
         } />
+        <Route
+          path="/profile"
+          element={
+            <DashboardLayout>
+              <ProfilePage />
+            </DashboardLayout>
+          }
+        />
       </Routes>
     </Router>
   );

@@ -1,9 +1,11 @@
 import { create } from "zustand";
 
-interface User {
+export interface User {
   id: string;
   email: string;
   name: string;
+  phone?: string;
+  photo?: string;
 }
 
 interface AuthState {
@@ -12,6 +14,7 @@ interface AuthState {
   isAuthenticated: boolean;
   login: (userData: User, token: string) => void;
   logout: () => void;
+  updateUser: (userData: Partial<User>) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -29,5 +32,13 @@ export const useAuthStore = create<AuthState>((set) => ({
     localStorage.removeItem("auth_token");
     localStorage.removeItem("user_data");
     set({ user: null, token: null, isAuthenticated: false });
+  },
+  updateUser: (updatedData) => {
+    set((state) => {
+      if (!state.user) return state;
+      const newUser = { ...state.user, ...updatedData };
+      localStorage.setItem("user_data", JSON.stringify(newUser));
+      return { user: newUser };
+    });
   },
 }));

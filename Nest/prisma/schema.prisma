@@ -11,6 +11,8 @@ model User {
   email        String        @unique
   password     String
   name         String?
+  phone        String?      
+  photo        String?
   transactions Transaction[]
   budgets      Budget[]
   categories   Category[] 

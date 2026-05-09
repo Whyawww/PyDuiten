@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AiService } from './modules/ai/ai.service';
 import { AiModule } from './modules/ai/ai.module';
 import { AuthService } from './auth/auth.service';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthService } from './auth/auth.service';
     TransactionsModule,
     ConfigModule.forRoot({ isGlobal: true }),
     AiModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService, AiService, AuthService],

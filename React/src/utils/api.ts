@@ -1,4 +1,5 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+export const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export class ApiError extends Error {
   status: number;
@@ -13,10 +14,11 @@ export const apiFetch = async <T>(
   options: RequestInit = {},
 ): Promise<T> => {
   const token = localStorage.getItem("auth_token");
-
   const headers = new Headers(options.headers);
 
-  if (!headers.has("Content-Type")) {
+  const isFormData = options.body instanceof FormData;
+
+  if (!headers.has("Content-Type") && !isFormData) {
     headers.set("Content-Type", "application/json");
   }
 
@@ -25,7 +27,7 @@ export const apiFetch = async <T>(
   }
 
   try {
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
       headers,
     });
