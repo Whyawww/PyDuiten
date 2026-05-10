@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import faviconImg from './assets/favicon.png';
 import { MainLayout } from '../component/layout/MainLayout';
@@ -9,8 +9,18 @@ import { Register } from './pages/Auth/Register/page';
 import { Dashboard } from './pages/Dashboard/page';
 import { TransactionPage } from './pages/Transaction/page'
 import { ProfilePage } from './pages/Profile/page';
+import { SplashScreen } from '../component/ui/SplashScreen'
 
 function App() {
+  const [showSplash, setShowSplash] = useState(
+    () => !sessionStorage.getItem('splashSeen')
+  );
+
+  const handleSplashDone = () => {
+    sessionStorage.setItem('splashSeen', '1');
+    setShowSplash(false);
+  };
+
   useEffect(() => {
     let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
     if (!link) {
@@ -22,37 +32,39 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={
-          <MainLayout>
-            <Home />
-          </MainLayout>
-        } />
+    <> {showSplash && <SplashScreen onDone={handleSplashDone} />}
+      <Router>
+        <Routes>
+          <Route path="/" element={
+            <MainLayout>
+              <Home />
+            </MainLayout>
+          } />
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={
-          <DashboardLayout>
-            <Dashboard />
-          </DashboardLayout>
-        } />
-
-        <Route path="/transaction" element={
-          <DashboardLayout>
-            <TransactionPage />
-          </DashboardLayout>
-        } />
-        <Route
-          path="/profile"
-          element={
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={
             <DashboardLayout>
-              <ProfilePage />
+              <Dashboard />
             </DashboardLayout>
-          }
-        />
-      </Routes>
-    </Router>
+          } />
+
+          <Route path="/transaction" element={
+            <DashboardLayout>
+              <TransactionPage />
+            </DashboardLayout>
+          } />
+          <Route
+            path="/profile"
+            element={
+              <DashboardLayout>
+                <ProfilePage />
+              </DashboardLayout>
+            }
+          />
+        </Routes>
+      </Router>
+    </>
   );
 }
 
