@@ -61,36 +61,34 @@ export const SummaryCards = ({ data }: SummaryProps) => {
             </div>
 
             {/* Pemasukan */}
-            <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm animate-slide-up" style={{ animationDelay: '100ms' }}>
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm animate-slide-up" style={{ animationDelay: '100ms' }}>
                 <div className="flex justify-between items-start mb-4">
                     <div>
-                        <p className="text-gray-500 font-medium text-sm">Pemasukan</p>
-                        <h2 className="text-2xl font-black text-gray-800 mt-1">{formatRupiah(pemasukan)}</h2>
+                        <p className="text-gray-500 dark:text-gray-400 font-medium text-sm">Pemasukan</p>
+                        <h2 className="text-2xl font-black text-gray-800 dark:text-white mt-1">{formatRupiah(pemasukan)}</h2>
                     </div>
-                    <div className="p-3 bg-green-50 text-green-600 rounded-2xl">
+                    <div className="p-3 bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400 rounded-2xl">
                         <TrendingUp className="w-6 h-6" />
                     </div>
                 </div>
-                <p className="text-sm font-medium text-green-600">
+                <p className="text-sm font-medium text-green-600 dark:text-green-400">
                     {pemasukan > 0 ? 'Mantap, pertahankan cuy!' : 'Belum ada pemasukan nih cuy.'}
                 </p>
             </div>
 
             {/* Pengeluaran */}
-            <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm animate-slide-up" style={{ animationDelay: '200ms' }}>
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm animate-slide-up" style={{ animationDelay: '200ms' }}>
                 <div className="flex justify-between items-start mb-4">
                     <div>
-                        <p className="text-gray-500 font-medium text-sm">Pengeluaran</p>
-                        <h2 className="text-2xl font-black text-gray-800 mt-1">{formatRupiah(pengeluaran)}</h2>
+                        <p className="text-gray-500 dark:text-gray-400 font-medium text-sm">Pengeluaran</p>
+                        <h2 className="text-2xl font-black text-gray-800 dark:text-white mt-1">{formatRupiah(pengeluaran)}</h2>
                     </div>
-                    <div className="p-3 bg-red-50 text-red-500 rounded-2xl">
+                    <div className="p-3 bg-red-50 dark:bg-red-500/10 text-red-500 dark:text-red-400 rounded-2xl">
                         <TrendingDown className="w-6 h-6" />
                     </div>
                 </div>
-                <p className="text-sm font-medium text-red-500">
-                    {pengeluaran > 0
-                        ? `Memakan ${percentageExpense}% dari pemasukan`
-                        : 'Bagus, belum ada pengeluaran!'}
+                <p className="text-sm font-medium text-red-500 dark:text-red-400">
+                    {pengeluaran > 0 ? `Memakan ${percentageExpense}% dari pemasukan` : 'Bagus, belum ada pengeluaran!'}
                 </p>
             </div>
         </div>

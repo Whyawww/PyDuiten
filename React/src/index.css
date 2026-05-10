@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-primary: #e07a5f;
   --color-secondary: #81b29a;
@@ -98,6 +100,9 @@
     @apply scroll-smooth;
   }
   body {
-    @apply bg-surface text-gray-800 antialiased;
+    @apply bg-surface text-gray-800 antialiased transition-colors duration-300;
+  }
+  html.dark body {
+    @apply bg-gray-900 text-gray-100;
   }
 }

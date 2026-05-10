@@ -29,12 +29,12 @@ export const ProfilePhoto = ({ photoPreview, onPhotoSelected }: ProfilePhotoProp
     return (
         <div className="flex flex-col items-center md:w-1/3">
             <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-surface overflow-hidden bg-gray-50 shadow-md transition-transform duration-300 group-hover:scale-105">
+                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-surface dark:border-gray-700 overflow-hidden bg-gray-50 dark:bg-gray-700/50 shadow-md transition-transform duration-300 group-hover:scale-105">
                     {displayPhoto ? (
                         <img src={displayPhoto} alt="Profile" className="w-full h-full object-cover" />
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary">
-                            <UserIcon className="w-16 h-16 opacity-50" />
+                        <div className="w-full h-full flex items-center justify-center bg-primary/5 dark:bg-primary/10 text-primary">
+                            <UserIcon className="w-16 h-16 opacity-50 dark:opacity-70" />
                         </div>
                     )}
                 </div>
@@ -55,7 +55,7 @@ export const ProfilePhoto = ({ photoPreview, onPhotoSelected }: ProfilePhotoProp
                 accept="image/*"
                 className="hidden"
             />
-            <p className="mt-4 text-xs font-semibold text-gray-400 text-center">Format: JPG, PNG.<br />Maksimal 2MB (Opsional)</p>
+            <p className="mt-4 text-xs font-semibold text-gray-400 dark:text-gray-500 text-center">Format: JPG, PNG.<br />Maksimal 2MB (Opsional)</p>
         </div>
     );
 };

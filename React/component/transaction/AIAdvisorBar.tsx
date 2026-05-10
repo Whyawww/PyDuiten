@@ -4,20 +4,20 @@ export const AIAdvisorBar = ({ income, expense }: { income: number, expense: num
     const ratio = income === 0 ? (expense > 0 ? 1 : 0) : expense / income;
 
     let status = {
-        color: 'bg-green-500',
+        color: 'bg-green-500 dark:bg-green-600',
         icon: <CheckCircle2 className="w-6 h-6 text-white" />,
         message: 'Aman terkendali bro! Keuangan sehat, pertahankan!'
     };
 
     if (ratio >= 0.8 || (income === 0 && expense > 0)) {
         status = {
-            color: 'bg-red-500',
+            color: 'bg-red-500 dark:bg-red-600',
             icon: <Flame className="w-6 h-6 text-white" />,
             message: 'WADUH BONCOS! Pengeluaran lu mepet/lebih dari pemasukan. Ngerem jajan woy!'
         };
     } else if (ratio >= 0.5) {
         status = {
-            color: 'bg-yellow-500',
+            color: 'bg-yellow-500 dark:bg-yellow-600',
             icon: <AlertTriangle className="w-6 h-6 text-white" />,
             message: 'Hati-hati cuy! Pengeluaran lumayan gede nih. Kurangin jajan gak penting.'
         };

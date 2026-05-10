@@ -58,19 +58,19 @@ export const Dashboard = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
                     <div className="flex items-center gap-3">
-                        <h1 className="text-2xl sm:text-3xl font-black text-gray-800 tracking-tight">Ringkasan Keuangan</h1>
+                        <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-white tracking-tight">Ringkasan Keuangan</h1>
                         {isLoading && <Loader2 className="w-5 h-5 animate-spin text-primary" />}
                     </div>
-                    <p className="text-gray-500 font-medium mt-1">Pantau terus duit lu biar nggak boncos.</p>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">Pantau terus duit lu biar nggak boncos.</p>
                 </div>
 
                 <div className="relative">
-                    <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-2xl px-4 py-2.5 shadow-sm hover:border-primary focus-within:border-primary transition-colors">
-                        <Filter className="w-4 h-4 text-gray-400" />
+                    <div className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-2.5 shadow-sm hover:border-primary focus-within:border-primary transition-colors">
+                        <Filter className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                         <select
                             value={filter}
                             onChange={(e) => setFilter(e.target.value)}
-                            className="bg-transparent text-sm font-semibold text-gray-700 outline-none cursor-pointer appearance-none pr-4"
+                            className="bg-transparent text-sm font-semibold text-gray-700 dark:text-gray-300 outline-none cursor-pointer appearance-none pr-4"
                             disabled={isLoading}
                         >
                             <option value="Minggu Ini">Minggu Ini</option>

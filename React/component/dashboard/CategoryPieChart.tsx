@@ -26,22 +26,21 @@ export const CategoryPieChart = ({ transactions }: { transactions: TransactionIt
         new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
 
     return (
-        <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm flex flex-col animate-slide-up lg:col-span-1 min-h-[350px]" style={{ animationDelay: '400ms' }}>
+        <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-6 shadow-sm flex flex-col animate-slide-up lg:col-span-1 min-h-[350px]" style={{ animationDelay: '400ms' }}>
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                     <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
                         <PieChartIcon className="w-5 h-5" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-gray-800">Kategori</h3>
+                        <h3 className="font-bold text-gray-800 dark:text-white">Kategori</h3>
                     </div>
                 </div>
 
-                {/* Toggle Dropdown */}
                 <select
                     value={type}
                     onChange={(e) => setType(e.target.value as 'expense' | 'income')}
-                    className="bg-surface/50 border border-gray-200 text-xs font-bold text-gray-600 rounded-xl px-3 py-1.5 outline-none cursor-pointer focus:border-primary transition-colors"
+                    className="bg-surface/50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-xs font-bold text-gray-600 dark:text-gray-300 rounded-xl px-3 py-1.5 outline-none cursor-pointer focus:border-primary transition-colors"
                 >
                     <option value="expense">Pengeluaran</option>
                     <option value="income">Pemasukan</option>

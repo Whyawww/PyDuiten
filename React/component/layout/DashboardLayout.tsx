@@ -1,10 +1,11 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Receipt, LogOut, Menu, ChevronLeft, UserCircle } from 'lucide-react';
+import { LayoutDashboard, Receipt, LogOut, Menu, ChevronLeft, UserCircle, Sun, Moon } from 'lucide-react';
 import faviconImg from '../../src/assets/favicon.png';
 import { useAuthStore } from '../../src/store/useAuthStore';
 import { ConfirmModal } from '../transaction/ConfirmModal';
+import { useThemeStore } from '../../src/store/useThemeStore';
 
 interface DashboardLayoutProps {
     children: ReactNode;
@@ -21,6 +22,12 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     const navigate = useNavigate();
     const logout = useAuthStore((state) => state.logout);
 
+    const { theme, toggleTheme, initTheme } = useThemeStore();
+
+    useEffect(() => {
+        initTheme();
+    }, [initTheme]);
+
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
@@ -33,7 +40,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     };
 
     return (
-        <div className="min-h-screen bg-surface flex overflow-hidden">
+        <div className="min-h-screen bg-surface dark:bg-gray-950 flex overflow-hidden">
             <ConfirmModal
                 isOpen={isLogoutModalOpen}
                 title="Yakin Mau Keluar?"
@@ -45,41 +52,33 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
             <div
                 onClick={close}
-                className={`md:hidden fixed inset-0 bg-black/30 z-40 transition-opacity duration-300
+                className={`md:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300
                     ${isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
             />
 
             <button
                 onClick={open}
                 aria-label="Buka sidebar"
-                className={`hidden md:flex fixed top-6 left-6 z-40 bg-white p-3 rounded-xl shadow-md
-                    border border-gray-100 text-gray-600 hover:text-primary transition-all duration-300
-                    ${isSidebarOpen
-                        ? 'opacity-0 scale-75 pointer-events-none'
-                        : 'opacity-100 scale-100'
-                    }`}
+                className={`hidden md:flex fixed top-6 left-6 z-40 bg-white dark:bg-gray-800 p-3 rounded-xl shadow-md
+                    border border-gray-100 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:text-primary transition-all duration-300
+                    ${isSidebarOpen ? 'opacity-0 scale-75 pointer-events-none' : 'opacity-100 scale-100'}`}
             >
                 <Menu className="w-5 h-5" />
             </button>
 
             <aside
-                className={`hidden md:flex flex-col bg-white border-r border-gray-200
+                className={`hidden md:flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800
                     fixed h-full w-64 z-50 transition-transform duration-300 ease-in-out
                     ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
             >
-                <div className="p-6 flex items-center justify-between border-b border-gray-100">
+                <div className="p-6 flex items-center justify-between border-b border-gray-100 dark:border-gray-800">
                     <div className="flex items-center gap-3 overflow-hidden">
                         <img src={faviconImg} alt="Logo" className="w-8 h-8 shrink-0" />
-                        <span className="text-xl font-black text-gray-800 tracking-tighter whitespace-nowrap">
+                        <span className="text-xl font-black text-gray-800 dark:text-white tracking-tighter whitespace-nowrap">
                             Py<span className="text-primary">Duiten</span>
                         </span>
                     </div>
-
-                    <button
-                        onClick={close}
-                        aria-label="Tutup sidebar"
-                        className="p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-800 rounded-lg transition-colors shrink-0"
-                    >
+                    <button onClick={close} className="p-1.5 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-white rounded-lg transition-colors shrink-0">
                         <ChevronLeft className="w-5 h-5" />
                     </button>
                 </div>
@@ -88,59 +87,42 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                     {menuItems.map(({ name, icon: Icon, path }) => {
                         const isActive = location.pathname === path;
                         return (
-                            <Link
-                                key={name}
-                                to={path}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium
-                                    transition-all duration-200 whitespace-nowrap group
-                                    ${isActive
-                                        ? 'bg-primary/10 text-primary'
-                                        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
-                                    }`}
+                            <Link key={name} to={path}
+                                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 whitespace-nowrap group
+                                    ${isActive ? 'bg-primary/10 dark:bg-primary/20 text-primary'
+                                        : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-white'}`}
                             >
-                                <Icon className={`w-5 h-5 shrink-0 transition-transform duration-200
-                                    ${isActive ? 'scale-110' : 'group-hover:scale-110'}`}
-                                />
+                                <Icon className={`w-5 h-5 shrink-0 transition-transform duration-200 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
                                 <span>{name}</span>
-
-                                {isActive && (
-                                    <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />
-                                )}
+                                {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />}
                             </Link>
                         );
                     })}
                 </nav>
 
-                <div className="p-4 border-t border-gray-100">
-                    <button
-                        onClick={() => setIsLogoutModalOpen(true)}
-                        className="flex items-center gap-3 px-4 py-3 w-full rounded-xl font-medium
-                        text-red-500 hover:bg-red-50 transition-all duration-200 whitespace-nowrap group"
-                    >
-                        <LogOut className="w-5 h-5 shrink-0 transition-transform duration-200 group-hover:-translate-x-0.5" />
+                <div className="p-4 space-y-2 border-t border-gray-100 dark:border-gray-800">
+                    <button onClick={toggleTheme} className="flex items-center gap-3 px-4 py-3 w-full rounded-xl font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100 transition-all duration-200 whitespace-nowrap group">
+                        {theme === 'light' ? <Moon className="w-5 h-5 shrink-0 group-hover:-translate-y-0.5" /> : <Sun className="w-5 h-5 shrink-0 text-yellow-400 group-hover:rotate-90" />}
+                        {theme === 'light' ? 'Mode Gelap' : 'Mode Terang'}
+                    </button>
+                    <button onClick={() => setIsLogoutModalOpen(true)} className="flex items-center gap-3 px-4 py-3 w-full rounded-xl font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-200 whitespace-nowrap group">
+                        <LogOut className="w-5 h-5 shrink-0 group-hover:-translate-x-0.5" />
                         Keluar
                     </button>
                 </div>
             </aside>
 
-            <main className={`flex-1 relative pb-20 md:pb-0 transition-all duration-300 ease-in-out
-                ${isSidebarOpen ? 'md:ml-64' : 'md:ml-0'}`}
-            >
+            <main className={`flex-1 relative pb-20 md:pb-0 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'md:ml-64' : 'md:ml-0'}`}>
                 <div className={`${!isSidebarOpen ? 'md:pt-16' : ''}`}>
                     {children}
                 </div>
             </main>
 
-            <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30 px-6 py-3 flex justify-around items-center">
+            <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-30 px-6 py-3 flex justify-around items-center">
                 {menuItems.map(({ name, icon: Icon, path }) => {
                     const isActive = location.pathname === path;
                     return (
-                        <Link
-                            key={name}
-                            to={path}
-                            className={`flex flex-col items-center gap-1 p-2 transition-colors duration-200
-                                ${isActive ? 'text-primary' : 'text-gray-400 hover:text-gray-600'}`}
-                        >
+                        <Link key={name} to={path} className={`flex flex-col items-center gap-1 p-2 transition-colors duration-200 ${isActive ? 'text-primary' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'}`}>
                             <Icon className={`w-5 h-5 transition-transform duration-200 ${isActive ? 'scale-110' : ''}`} />
                             <span className="text-[10px] font-bold">{name}</span>
                         </Link>

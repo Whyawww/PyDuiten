@@ -82,10 +82,10 @@ export const TransactionPage = () => {
             <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-3">
-                        <h1 className="text-2xl sm:text-3xl font-black text-gray-800 tracking-tight">Manajemen Transaksi</h1>
+                        <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-white tracking-tight">Manajemen Transaksi</h1>
                         {isLoading && <Loader2 className="w-5 h-5 animate-spin text-primary" />}
                     </div>
-                    <p className="text-gray-500 font-medium mt-1">Catat semua arus kas di PyDuiten.</p>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">Catat semua arus kas di PyDuiten.</p>
                 </div>
             </div>
 

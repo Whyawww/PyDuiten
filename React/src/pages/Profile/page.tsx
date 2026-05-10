@@ -80,17 +80,17 @@ export const ProfilePage = () => {
             />
 
             <div className="mb-8">
-                <h1 className="text-2xl sm:text-3xl font-black text-gray-800 tracking-tight">Profil Gua</h1>
-                <p className="text-gray-500 font-medium mt-1">Atur data diri dan foto profil lu di sini.</p>
+                <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-white tracking-tight">Profil Gua</h1>
+                <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">Atur data diri dan foto profil lu di sini.</p>
             </div>
 
             {errorMsg && (
-                <div className="max-w-4xl bg-red-50 text-red-500 p-4 rounded-2xl mb-6 text-sm font-bold border border-red-100 animate-slide-in-right">
+                <div className="max-w-4xl bg-red-50 dark:bg-red-500/10 text-red-500 dark:text-red-400 p-4 rounded-2xl mb-6 text-sm font-bold border border-red-100 dark:border-red-500/20 animate-slide-in-right">
                     {errorMsg}
                 </div>
             )}
 
-            <form onSubmit={handleSave} className="max-w-4xl bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 flex flex-col md:flex-row gap-10 animate-slide-up">
+            <form onSubmit={handleSave} className="max-w-4xl bg-white dark:bg-gray-800 rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row gap-10 animate-slide-up">
                 <ProfilePhoto
                     photoPreview={photoPreview}
                     onPhotoSelected={handlePhotoSelected}
