@@ -6,6 +6,8 @@ import { InputField } from '../../../../component/ui/InputField';
 import { SocialButton } from '../../../../component/ui/SocialButton';
 import { apiFetch, ApiError } from '../../../utils/api';
 import { ConfirmModal } from '../../../../component/transaction/ConfirmModal';
+import { LegalModal } from '../../../../component/ui/LegalModal';
+import { PrivacyContent, TermsContent } from '../../../../component/ui/LegalContent';
 
 export const Register = () => {
     const navigate = useNavigate();
@@ -20,6 +22,7 @@ export const Register = () => {
     const [errorMsg, setErrorMsg] = useState('');
 
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [modal, setModal] = useState<{ open: boolean, type: 'privacy' | 'terms' }>({ open: false, type: 'privacy' });
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -75,6 +78,13 @@ export const Register = () => {
     return (
         <AuthLayout title="Gabung PyDuiten Sekarang!" subtitle="Satu langkah lagi buat tobat finansial. Daftarin diri lu di bawah.">
 
+            <LegalModal
+                isOpen={modal.open}
+                onClose={() => setModal({ ...modal, open: false })}
+                title={modal.type === 'privacy' ? 'Kebijakan Privasi' : 'Syarat & Ketentuan'}
+                content={modal.type === 'privacy' ? <PrivacyContent /> : <TermsContent />}
+            />
+
             <ConfirmModal
                 isOpen={showSuccessModal}
                 type="success"
@@ -82,7 +92,6 @@ export const Register = () => {
                 message="Akun lu udah aktif dan siap dipakai buat nyatet keuangan. Gas login sekarang bro!"
                 confirmText="Lanjut Login"
                 onConfirm={handleSuccessConfirm}
-            // Perhatikan: onCancel ga kita lempar, jadi tombol "Batal" ga bakal dirender.
             />
 
             <form onSubmit={handleRegister} className="w-full">
@@ -133,6 +142,25 @@ export const Register = () => {
                 >
                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Buat Akun'}
                 </button>
+
+                <p className="text-[10px] text-gray-400 mt-4 text-center leading-relaxed">
+                    Dengan buat akun, lu setuju sama
+                    <button
+                        type="button"
+                        onClick={() => setModal({ open: true, type: 'terms' })}
+                        className="text-primary font-bold hover:underline mx-1"
+                    >
+                        Syarat & Ketentuan
+                    </button>
+                    dan
+                    <button
+                        type="button"
+                        onClick={() => setModal({ open: true, type: 'privacy' })}
+                        className="text-primary font-bold hover:underline mx-1"
+                    >
+                        Kebijakan Privasi
+                    </button> kita.
+                </p>
 
                 <p className="text-center text-gray-600 font-medium">
                     Udah punya akun? <a href="/login" className="text-primary font-bold hover:underline">Masuk di sini</a>

@@ -12,6 +12,8 @@ import { ProfilePage } from './pages/Profile/page';
 import { SplashScreen } from '../component/ui/SplashScreen'
 import { ForgotPassword } from './pages/Auth/ForgotPassword/page';
 import { ResetPassword } from './pages/Auth/ResetPassword/page';
+import { PrivacyPage } from './pages/Legal/Privacy';
+import { TermsPage } from './pages/Legal/Terms';
 
 function App() {
   const [showSplash, setShowSplash] = useState(
@@ -66,6 +68,8 @@ function App() {
           />
           <Route path="/auth/forgot-password" element={<ForgotPassword />} />
           <Route path="/auth/reset-password" element={<ResetPassword />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
         </Routes>
       </Router>
     </>
