@@ -13,6 +13,8 @@ model User {
   name         String?
   phone        String?      
   photo        String?
+  resetToken      String?
+  resetTokenExp   DateTime?
   transactions Transaction[]
   budgets      Budget[]
   categories   Category[] 

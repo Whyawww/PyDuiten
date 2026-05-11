@@ -14,11 +14,24 @@ export const Login = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [emailError, setEmailError] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
     const [showWelcome, setShowWelcome] = useState(false);
     const [userName, setUserName] = useState('');
+
+    const handleForgotPassword = (e: React.MouseEvent) => {
+        e.preventDefault();
+        setEmailError('');
+
+        if (!email) {
+            setEmailError('Isi dulu email lu cuy, biar kita tau akun siapa yang mau di-reset!');
+            return;
+        }
+
+        navigate('/auth/forgot-password', { state: { email } });
+    };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -101,8 +114,13 @@ export const Login = () => {
                         placeholder="email@gmail.com"
                         icon={<Mail className="w-5 h-5" />}
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            if (emailError) setEmailError('');
+                        }}
+                        error={emailError}
                     />
+
                     <InputField
                         label="Kata Sandi"
                         type="password"
@@ -113,7 +131,13 @@ export const Login = () => {
                     />
 
                     <div className="flex justify-end mb-6">
-                        <a href="#" className="text-sm font-bold text-primary hover:text-secondary transition-colors">Lupa sandi?</a>
+                        <button
+                            type="button"
+                            onClick={handleForgotPassword}
+                            className="text-sm font-bold text-primary hover:text-secondary transition-colors"
+                        >
+                            Lupa sandi?
+                        </button>
                     </div>
 
                     <button
