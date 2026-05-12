@@ -1,0 +1,40 @@
+import {
+  Controller,
+  Get,
+  Query,
+  UseGuards,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { AiService } from './ai.service';
+
+@Controller('ai')
+@UseGuards(ThrottlerGuard)
+export class AiController {
+  constructor(private readonly aiService: AiService) {}
+
+  @Throttle({ default: { limit: 2, ttl: 60000 } })
+  @Get('advice')
+  async getAdvice(
+    @Query('income') income: string,
+    @Query('expense') expense: string,
+  ) {
+    const inc = Number(income);
+    const exp = Number(expense);
+
+    if (isNaN(inc) || isNaN(exp)) {
+      throw new HttpException(
+        'Income dan Expense wajib berupa angka yang valid cuy!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const advice = await this.aiService.generateFinancialAdvice(inc, exp);
+
+    return {
+      status: 'success',
+      data: { advice },
+    };
+  }
+}
