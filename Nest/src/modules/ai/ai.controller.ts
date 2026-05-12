@@ -37,4 +37,28 @@ export class AiController {
       data: { advice },
     };
   }
+
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
+  @Get('smart-nudge')
+  async getSmartNudge(
+    @Query('income') income: string,
+    @Query('expense') expense: string,
+  ) {
+    const inc = Number(income);
+    const exp = Number(expense);
+
+    if (isNaN(inc) || isNaN(exp)) {
+      throw new HttpException(
+        'Format angka tidak valid cuy!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const nudge = await this.aiService.generateSmartNudge(inc, exp);
+
+    return {
+      status: 'success',
+      data: { nudge },
+    };
+  }
 }

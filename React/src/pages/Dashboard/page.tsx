@@ -5,6 +5,7 @@ import { CashFlowChart } from '../../../component/dashboard/CashFlowChart';
 import { RecentTransactions } from '../../../component/dashboard/RecentTransactions';
 import { SummaryCards } from '../../../component/dashboard/SummaryCards';
 import { CategoryPieChart } from '../../../component/dashboard/CategoryPieChart';
+import { SmartNudge } from '../../../component/ui/SmartNudge';
 
 export const Dashboard = () => {
     const [filter, setFilter] = useState('Bulan Ini');
@@ -83,6 +84,10 @@ export const Dashboard = () => {
             </div>
 
             <SummaryCards data={summaryData} />
+            <SmartNudge
+                income={summaryData.pemasukan}
+                expense={summaryData.pengeluaran}
+            />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <CashFlowChart transactions={filteredTransactions} />

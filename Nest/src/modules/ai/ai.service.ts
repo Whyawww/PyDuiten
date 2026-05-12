@@ -42,4 +42,40 @@ export class AiService {
       return 'Waduh cuy, AI gua lagi pusing mikirin duit lu. Coba refresh lagi ya...';
     }
   }
+
+  async generateSmartNudge(income: number, expense: number): Promise<string> {
+    const model = this.genAI.getGenerativeModel({
+      model: 'models/gemini-2.5-flash',
+    });
+
+    const sisa = income - expense;
+    const rasioSisa = income > 0 ? (sisa / income) * 100 : 0;
+
+    const prompt = `
+      Kamu adalah Smart Nudge untuk Gen Z. Bicaralah dengan gaya edukatif tapi santai (cuy, bro, lu, gua) maksimal 2 kalimat.
+      Berdasarkan riset perencana keuangan 50/30/20, investasi/tabungan ideal adalah minimal 20% dari pemasukan.
+
+      Data user:
+      - Pemasukan: Rp ${income}
+      - Pengeluaran: Rp ${expense}
+      - Sisa Uang: Rp ${sisa} (Rasio sisa: ${rasioSisa.toFixed(1)}%)
+
+      Aturan Nudge:
+      1. Jika Sisa Uang kurang dari 10%: Ingatkan untuk fokus mengerem pengeluaran tidak penting (bocor halus) dan utamakan membangun Dana Darurat terlebih dahulu.
+      2. Jika Sisa Uang antara 10% - 20%: Apresiasi karena sudah bisa menyisihkan uang, lalu dorong agar lebih konsisten menabung untuk masa depan.
+      3. Jika Sisa Uang di atas 20%: Ingatkan bahwa sisa uangnya sangat ideal. Sarankan untuk melakukan diversifikasi investasi jangka panjang secara rutin yang proporsional dengan besaran pemasukannya.
+
+      PENTING: Jangan pernah menyebutkan angka nominal pasti (misal: 100 ribu), nama produk, merek, instrumen, atau platform investasi spesifik (seperti nama bank, saham, kripto, atau aplikasi). Berikan saran secara umum dan konseptual saja.
+
+      Berikan 1 pesan singkat yang memotivasi tanpa awalan salam.
+    `;
+
+    try {
+      const result = await model.generateContent(prompt);
+      return result.response.text();
+    } catch (error) {
+      console.error('AI Smart Nudge Error:', error);
+      return 'Sisihkan dikit buat dana darurat ya cuy, jaga-jaga buat masa depan!';
+    }
+  }
 }
