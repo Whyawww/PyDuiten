@@ -78,35 +78,4 @@ export class AiService {
       return 'Sisihkan dikit buat dana darurat ya cuy, jaga-jaga buat masa depan!';
     }
   }
-
-  async generateCategoryAnalysis(categorySummary: string): Promise<string> {
-    const model = this.genAI.getGenerativeModel({
-      model: 'models/gemini-2.5-flash',
-    });
-
-    const prompt = `
-      Kamu adalah Data Analyst Keuangan Gen Z. Bicaralah dengan gaya asik, tajam, dan santai (cuy, bro, lu, gua).
-      Berikut adalah rekap total transaksi user per kategori bulan ini (Format: JSON):
-      ${categorySummary}
-
-      Buatlah catatan ringkasan analisis yang terbagi menjadi 3 paragraf singkat:
-      1. Pemasukan yang ngebantu banget (apresiasi sumber cuannya).
-      2. Pengeluaran yang masih wajar/normal (seperti tagihan, makan standar).
-      3. Pengeluaran yang lumayan boros atau bikin boncos banget (roasting kategori yang makan porsi paling gede).
-
-      Aturan:
-      - Gunakan format HTML list (<ul><li>...</li></ul>) agar rapi saat dirender di frontend.
-      - Jangan gunakan awalan/akhiran markdown seperti \`\`\`html. Langsung berikan tag HTML-nya.
-      - Jika data kosong atau sangat sedikit, berikan respons: "Belum banyak data nih cuy, catat transaksi lu dulu biar gua bisa kasih analisis!"
-    `;
-
-    try {
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
-      return text.replace(/```html|```/g, '').trim();
-    } catch (error) {
-      console.error('AI Category Analysis Error:', error);
-      return '<p>Waduh cuy, AI gua lagi pusing nganalisis kategori lu. Coba bentar lagi ya.</p>';
-    }
-  }
 }
