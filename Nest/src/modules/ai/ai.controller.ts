@@ -1,10 +1,12 @@
 import {
   Controller,
   Get,
+  Body,
   Query,
   UseGuards,
   HttpException,
   HttpStatus,
+  Post,
 } from '@nestjs/common';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { AiService } from './ai.service';
@@ -59,6 +61,31 @@ export class AiController {
     return {
       status: 'success',
       data: { nudge },
+    };
+  }
+
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
+  @Post('category-analysis')
+  async getCategoryAnalysis(
+    @Body()
+    body: {
+      categoryData: Record<string, { type: string; amount: number }>;
+    },
+  ) {
+    if (!body || !body.categoryData) {
+      throw new HttpException(
+        'Data kategori tidak valid cuy!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const summaryString = JSON.stringify(body.categoryData);
+    const analysis =
+      await this.aiService.generateCategoryAnalysis(summaryString);
+
+    return {
+      status: 'success',
+      data: { analysis },
     };
   }
 }

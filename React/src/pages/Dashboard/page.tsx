@@ -6,6 +6,7 @@ import { RecentTransactions } from '../../../component/dashboard/RecentTransacti
 import { SummaryCards } from '../../../component/dashboard/SummaryCards';
 import { CategoryPieChart } from '../../../component/dashboard/CategoryPieChart';
 import { SmartNudge } from '../../../component/ui/SmartNudge';
+import { FinancialSummaryNote } from '../../../component/dashboard/FinancialSummaryNote';
 
 export const Dashboard = () => {
     const [filter, setFilter] = useState('Bulan Ini');
@@ -30,24 +31,20 @@ export const Dashboard = () => {
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
             switch (filter) {
-                case 'Minggu Ini':
-                    return diffDays <= 7;
-                case 'Bulan Ini':
-                    return diffDays <= 30;
-                case '3 Bulan':
-                    return diffDays <= 90;
-                case 'Tahun Ini':
-                    return trxDate.getFullYear() === now.getFullYear();
-                default:
-                    return true;
+                case 'Minggu Ini': return diffDays <= 7;
+                case 'Bulan Ini': return diffDays <= 30;
+                case '3 Bulan': return diffDays <= 90;
+                case 'Tahun Ini': return trxDate.getFullYear() === now.getFullYear();
+                default: return true;
             }
         });
     }, [allTransactions, filter]);
 
     const summaryData = useMemo(() => {
         return filteredTransactions.reduce((acc, curr) => {
-            if (curr.type === 'income') acc.pemasukan += curr.amount;
-            else acc.pengeluaran += curr.amount;
+            const typeLower = curr.type.toLowerCase();
+            if (typeLower === 'income') acc.pemasukan += Number(curr.amount);
+            else acc.pengeluaran += Number(curr.amount);
 
             acc.saldo = acc.pemasukan - acc.pengeluaran;
             return acc;
@@ -55,8 +52,8 @@ export const Dashboard = () => {
     }, [filteredTransactions]);
 
     return (
-        <div className="p-6 md:p-8 animate-fade-in">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <main className="p-6 md:p-8 animate-fade-in">
+            <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
                     <div className="flex items-center gap-3">
                         <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-white tracking-tight">Ringkasan Keuangan</h1>
@@ -81,22 +78,29 @@ export const Dashboard = () => {
                         </select>
                     </div>
                 </div>
-            </div>
+            </header>
 
-            <SummaryCards data={summaryData} />
-            <SmartNudge
-                income={summaryData.pemasukan}
-                expense={summaryData.pengeluaran}
-            />
+            <section aria-label="Summary">
+                <SummaryCards data={summaryData} />
+                <SmartNudge
+                    income={summaryData.pemasukan}
+                    expense={summaryData.pengeluaran}
+                />
+            </section>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <section className="grid grid-cols-1 lg:grid-cols-3 gap-6" aria-label="Cashflow and Transactions">
                 <CashFlowChart transactions={filteredTransactions} />
                 <RecentTransactions transactions={filteredTransactions} />
-            </div>
+            </section>
 
-            <div className="pt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <CategoryPieChart transactions={filteredTransactions} />
-            </div>
-        </div>
+            <section className="pt-8 grid grid-cols-1 lg:grid-cols-3 gap-6" aria-label="Category Analysis">
+                <div className="lg:col-span-1">
+                    <CategoryPieChart transactions={filteredTransactions} />
+                </div>
+                <div className="lg:col-span-2 h-[400px]">
+                    <FinancialSummaryNote transactions={filteredTransactions} />
+                </div>
+            </section>
+        </main>
     );
 };
