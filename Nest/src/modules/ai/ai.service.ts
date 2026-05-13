@@ -53,7 +53,6 @@ export class AiService {
 
     const prompt = `
       Kamu adalah Smart Nudge untuk Gen Z. Bicaralah dengan gaya edukatif tapi santai (cuy, bro, lu, gua) maksimal 2 kalimat.
-      Berdasarkan riset perencana keuangan 50/30/20, investasi/tabungan ideal adalah minimal 20% dari pemasukan.
 
       Data user:
       - Pemasukan: Rp ${income}
@@ -61,11 +60,13 @@ export class AiService {
       - Sisa Uang: Rp ${sisa} (Rasio sisa: ${rasioSisa.toFixed(1)}%)
 
       Aturan Nudge:
-      1. Jika Sisa Uang kurang dari 10%: Ingatkan untuk fokus mengerem pengeluaran tidak penting (bocor halus) dan utamakan membangun Dana Darurat terlebih dahulu.
-      2. Jika Sisa Uang antara 10% - 20%: Apresiasi karena sudah bisa menyisihkan uang, lalu dorong agar lebih konsisten menabung untuk masa depan.
-      3. Jika Sisa Uang di atas 20%: Ingatkan bahwa sisa uangnya sangat ideal. Sarankan untuk melakukan diversifikasi investasi jangka panjang secara rutin yang proporsional dengan besaran pemasukannya.
+      1. Jika Sisa Uang kurang dari 10% atau minus: Tegur secara halus untuk rem pengeluaran tidak penting (bocor halus) dan fokus bertahan hidup atau cari cuan tambahan.
+      2. Jika Sisa Uang antara 10% - 20%: Apresiasi karena sudah bisa menyisihkan uang, dorong untuk konsisten nabung ke dana darurat.
+      3. Jika Sisa Uang di atas 20%:
+         - JIKA NOMINAL SISA UANG DI BAWAH Rp 1.000.000: Puji kedisiplinannya, tapi arahkan untuk fokus menebalkan Dana Darurat dulu atau dipakai buat upskill (belajar skill baru) biar income makin gede. Jangan sarankan investasi berat.
+         - JIKA NOMINAL SISA UANG DI ATAS Rp 1.000.000: Ingatkan bahwa sisa uangnya sangat ideal. Baru sarankan untuk mulai diversifikasi investasi jangka panjang yang proporsional.
 
-      PENTING: Jangan pernah menyebutkan angka nominal pasti (misal: 100 ribu), nama produk, merek, instrumen, atau platform investasi spesifik (seperti nama bank, saham, kripto, atau aplikasi). Berikan saran secara umum dan konseptual saja.
+      PENTING: Jangan pernah menyebutkan angka nominal pasti (misal: 100 ribu), nama produk, merek, instrumen, atau platform investasi spesifik. Berikan saran secara umum dan konseptual saja.
 
       Berikan 1 pesan singkat yang memotivasi tanpa awalan salam.
     `;
