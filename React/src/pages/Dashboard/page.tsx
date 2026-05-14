@@ -3,10 +3,12 @@ import { Filter, Loader2 } from 'lucide-react';
 import { useTransactionStore } from '../../store/useTransactionStore';
 import { CashFlowChart } from '../../../component/dashboard/CashFlowChart';
 import { RecentTransactions } from '../../../component/dashboard/RecentTransactions';
+import { useAuthStore } from '../../store/useAuthStore';
 import { SummaryCards } from '../../../component/dashboard/SummaryCards';
 import { CategoryPieChart } from '../../../component/dashboard/CategoryPieChart';
 import { SmartNudge } from '../../../component/ui/SmartNudge';
 import { FinancialSummaryNote } from '../../../component/dashboard/FinancialSummaryNote';
+import { DownloadReportButton } from '../../../component/dashboard/DownloadReportButton';
 
 export const Dashboard = () => {
     const [filter, setFilter] = useState('Bulan Ini');
@@ -14,6 +16,9 @@ export const Dashboard = () => {
     const allTransactions = useTransactionStore((state) => state.transactions);
     const fetchTransactions = useTransactionStore((state) => state.fetchTransactions);
     const isLoading = useTransactionStore((state) => state.isLoading);
+
+    const user = useAuthStore((state) => state.user);
+    const userName = user?.name || 'PyDuiten Cuyyyy';
 
     useEffect(() => {
         fetchTransactions();
@@ -42,13 +47,52 @@ export const Dashboard = () => {
 
     const summaryData = useMemo(() => {
         return filteredTransactions.reduce((acc, curr) => {
-            const typeLower = curr.type.toLowerCase();
+            const typeLower = String(curr.type).toLowerCase();
             if (typeLower === 'income') acc.pemasukan += Number(curr.amount);
             else acc.pengeluaran += Number(curr.amount);
 
             acc.saldo = acc.pemasukan - acc.pengeluaran;
             return acc;
         }, { saldo: 0, pemasukan: 0, pengeluaran: 0 });
+    }, [filteredTransactions]);
+
+    const pdfAnalysisNote = useMemo(() => {
+        if (summaryData.pemasukan === 0 && summaryData.pengeluaran === 0) {
+            return "Belum ada transaksi di periode ini cuy. Yuk mulai catat keuangan lu!";
+        }
+        if (summaryData.pengeluaran > summaryData.pemasukan) {
+            return "Waduh, pengeluaran lu lebih gede dari pemasukan di periode ini. Rem dikit jajan lu cuy biar nggak boncos!";
+        }
+        if (summaryData.pemasukan > 0 && summaryData.pengeluaran <= summaryData.pemasukan * 0.5) {
+            return "Gokil! Keuangan lu super sehat. Pertahankan puasa belanjanya dan rutinin nabung cuy.";
+        }
+        return "Keuangan lu masih terpantau aman dan wajar. Jangan lupa alokasiin buat dana darurat ya!";
+    }, [summaryData]);
+
+    const pdfTransactions = useMemo(() => {
+        return filteredTransactions.map((trx, index) => {
+
+            const item = trx as unknown as {
+                id?: string | number;
+                type: string;
+                categoryName?: string | null;
+                category?: string | { name: string } | null;
+                amount: string | number;
+                date: string | Date;
+            };
+
+            const catData = item.category;
+            const validCategory = item.categoryName ||
+                (typeof catData === 'object' && catData !== null ? catData.name : catData);
+
+            return {
+                id: String(item.id ?? `temp-id-${index}`),
+                type: String(item.type).toUpperCase() === 'INCOME' ? 'INCOME' as const : 'EXPENSE' as const,
+                categoryName: typeof validCategory === 'string' ? validCategory : null,
+                amount: Number(item.amount),
+                date: item.date,
+            };
+        });
     }, [filteredTransactions]);
 
     return (
@@ -62,13 +106,24 @@ export const Dashboard = () => {
                     <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">Pantau terus duit lu biar nggak boncos.</p>
                 </div>
 
-                <div className="relative">
-                    <div className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-2.5 shadow-sm hover:border-primary focus-within:border-primary transition-colors">
+                <div className="flex items-center gap-3">
+                    <DownloadReportButton
+                        userName={userName}
+                        filter={filter}
+                        summary={summaryData}
+                        transactions={pdfTransactions}
+                        analysisNote={pdfAnalysisNote}
+                    />
+
+                    <div className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200
+            dark:border-gray-700 rounded-2xl px-4 py-2.5 shadow-sm hover:border-primary
+            focus-within:border-primary transition-colors">
                         <Filter className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                         <select
                             value={filter}
                             onChange={(e) => setFilter(e.target.value)}
-                            className="bg-transparent text-sm font-semibold text-gray-700 dark:text-gray-300 outline-none cursor-pointer appearance-none pr-4"
+                            className="bg-transparent text-sm font-semibold text-gray-700 dark:text-gray-300
+                    outline-none cursor-pointer appearance-none pr-4"
                             disabled={isLoading}
                         >
                             <option value="Minggu Ini">Minggu Ini</option>

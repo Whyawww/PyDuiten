@@ -1,4 +1,4 @@
-import { ArrowRight, PlayCircle, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export interface SlideData {
@@ -30,7 +30,6 @@ export const HeroSlide = ({ slide, isActive, direction }: HeroSlideProps) => {
       `}
             aria-hidden={!isActive}
         >
-            {/* ── Text Column ── */}
             <div className="lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left mt-10 lg:mt-0">
 
                 {/* Badge */}
@@ -87,18 +86,6 @@ export const HeroSlide = ({ slide, isActive, direction }: HeroSlideProps) => {
                         Mulai Sekarang Gratis
                         <ArrowRight className="w-5 h-5" />
                     </Link>
-
-                    <button className="
-            flex items-center justify-center gap-2
-            bg-white text-gray-800 border-2 border-gray-200
-            px-8 py-4 rounded-3xl
-            hover:border-secondary hover:text-secondary hover:-translate-y-1
-            transition-all duration-300 font-bold text-lg w-full sm:w-auto
-            active:scale-95
-          ">
-                        <PlayCircle className="w-5 h-5" />
-                        Lihat Demo
-                    </button>
                 </div>
             </div>
 
