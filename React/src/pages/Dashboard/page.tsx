@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { Filter, Loader2 } from 'lucide-react';
+import { Filter, Loader2, Sparkles } from 'lucide-react';
 import { useTransactionStore } from '../../store/useTransactionStore';
 import { CashFlowChart } from '../../../component/dashboard/CashFlowChart';
 import { RecentTransactions } from '../../../component/dashboard/RecentTransactions';
@@ -55,6 +55,88 @@ export const Dashboard = () => {
             return acc;
         }, { saldo: 0, pemasukan: 0, pengeluaran: 0 });
     }, [filteredTransactions]);
+
+    const smartInsightText = useMemo(() => {
+        // Base Nudge
+        let insight = "Keuangan lu masih terpantau aman dan wajar. Jangan lupa alokasiin buat dana darurat/investasi ya!";
+        if (summaryData.pemasukan === 0 && summaryData.pengeluaran === 0) {
+            return "Belum ada transaksi di periode ini cuy. Catat keuangan lu!";
+        }
+        if (summaryData.pengeluaran > summaryData.pemasukan) {
+            insight = "Set, pengeluaran lu lebih gede dari pemasukan di periode ini. Rem dikit cuy biar nggak boncos!";
+        } else if (summaryData.pemasukan > 0 && summaryData.pengeluaran <= summaryData.pemasukan * 0.5) {
+            insight = "Gokil! Keuangan lu OK BAT. Rutinin nabung/investasi cuy dalam bentuk ape aje.";
+        }
+
+        // Analisa Komparatif Kategori
+        if (filter !== 'Bulan Ini') return insight;
+
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+
+        let lastMonth = currentMonth - 1;
+        let lastMonthYear = currentYear;
+        if (lastMonth < 0) {
+            lastMonth = 11;
+            lastMonthYear--;
+        }
+
+        const categoryStats: Record<string, { current: number; last: number }> = {};
+
+        allTransactions.forEach((trx) => {
+            const item = trx as unknown as {
+                type: string;
+                categoryName?: string | null;
+                category?: string | { name: string } | null;
+                amount: string | number;
+                date: string | Date;
+            };
+
+            if (String(item.type).toUpperCase() !== 'EXPENSE') return;
+
+            const trxDate = new Date(item.date);
+            const month = trxDate.getMonth();
+            const year = trxDate.getFullYear();
+
+            const catData = item.category;
+            const validCategory = item.categoryName ||
+                (typeof catData === 'object' && catData !== null ? catData.name : catData);
+            const catName = typeof validCategory === 'string' ? validCategory : 'Lainnya';
+
+            if (!categoryStats[catName]) {
+                categoryStats[catName] = { current: 0, last: 0 };
+            }
+
+            const amount = Number(item.amount);
+            if (month === currentMonth && year === currentYear) {
+                categoryStats[catName].current += amount;
+            } else if (month === lastMonth && year === lastMonthYear) {
+                categoryStats[catName].last += amount;
+            }
+        });
+
+        let worstCategory = '';
+        let highestPercentage = 0;
+
+        for (const [catName, stats] of Object.entries(categoryStats)) {
+            if (stats.current > stats.last && stats.last > 0) {
+                const increase = stats.current - stats.last;
+                const percentage = Math.round((increase / stats.last) * 100);
+
+                if (percentage > highestPercentage && increase > 10000) {
+                    highestPercentage = percentage;
+                    worstCategory = catName;
+                }
+            }
+        }
+
+        if (worstCategory) {
+            insight += ` Btw, bulan ini kategori ${worstCategory} lu lebih boros ${highestPercentage}% cuy dibanding bulan lalu. Evaluasi lagi pengeluaran lu buat hal itu!`;
+        }
+
+        return insight;
+    }, [summaryData, filter, allTransactions]);
 
     const pdfAnalysisNote = useMemo(() => {
         if (summaryData.pemasukan === 0 && summaryData.pengeluaran === 0) {
@@ -141,6 +223,17 @@ export const Dashboard = () => {
                     income={summaryData.pemasukan}
                     expense={summaryData.pengeluaran}
                 />
+                <div className="mb-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl flex gap-4 items-start shadow-sm">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-800 rounded-xl mt-0.5">
+                        <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-sm text-blue-900 dark:text-blue-300 mb-1">Insight PyDuiten</h3>
+                        <p className="text-sm font-medium text-blue-800 dark:text-blue-400/90 leading-relaxed">
+                            {smartInsightText}
+                        </p>
+                    </div>
+                </div>
             </section>
 
             <section className="grid grid-cols-1 lg:grid-cols-3 gap-6" aria-label="Cashflow and Transactions">
