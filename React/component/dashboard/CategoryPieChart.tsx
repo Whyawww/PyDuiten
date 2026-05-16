@@ -2,11 +2,13 @@ import { useMemo, useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { PieChart as PieChartIcon } from 'lucide-react';
 import type { TransactionItem } from '../transaction/TransactionForm';
+import { useTranslation } from 'react-i18next';
 
 const COLORS = ['#e07a5f', '#81b29a', '#f2cc8f', '#3d405b', '#e09f3e', '#9c6644', '#606c38', '#bc4749', '#0077b6', '#00b4d8'];
 
 export const CategoryPieChart = ({ transactions }: { transactions: TransactionItem[] }) => {
     const [type, setType] = useState<'expense' | 'income'>('expense');
+    const { t } = useTranslation();
 
     const chartData = useMemo(() => {
         const filtered = transactions.filter(trx => trx.type === type);
@@ -18,9 +20,12 @@ export const CategoryPieChart = ({ transactions }: { transactions: TransactionIt
         }, {} as Record<string, number>);
 
         return Object.entries(grouped)
-            .map(([name, value]) => ({ name, value }))
+            .map(([name, value]) => ({
+                name: t(`categories.${name}`, name),
+                value
+            }))
             .sort((a, b) => b.value - a.value);
-    }, [transactions, type]);
+    }, [transactions, type, t]);
 
     const formatRupiah = (value: number) =>
         new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
@@ -33,7 +38,7 @@ export const CategoryPieChart = ({ transactions }: { transactions: TransactionIt
                         <PieChartIcon className="w-5 h-5" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-gray-800 dark:text-white">Kategori</h3>
+                        <h3 className="font-bold text-gray-800 dark:text-white">{t('dashboard.category_title')}</h3>
                     </div>
                 </div>
 
@@ -42,15 +47,17 @@ export const CategoryPieChart = ({ transactions }: { transactions: TransactionIt
                     onChange={(e) => setType(e.target.value as 'expense' | 'income')}
                     className="bg-surface/50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-xs font-bold text-gray-600 dark:text-gray-300 rounded-xl px-3 py-1.5 outline-none cursor-pointer focus:border-primary transition-colors"
                 >
-                    <option value="expense">Pengeluaran</option>
-                    <option value="income">Pemasukan</option>
+                    <option value="expense">{t('dashboard.type_expense')}</option>
+                    <option value="income">{t('dashboard.type_income')}</option>
                 </select>
             </div>
 
             {chartData.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-gray-400 min-h-[200px]">
                     <PieChartIcon className="w-10 h-10 mb-2 opacity-30" />
-                    <p className="font-medium text-sm text-center">Belum ada {type === 'expense' ? 'pengeluaran' : 'pemasukan'}.</p>
+                    <p className="font-medium text-sm text-center">
+                        {type === 'expense' ? t('dashboard.no_data_expense') : t('dashboard.no_data_income')}
+                    </p>
                 </div>
             ) : (
                 <div className="flex-1 w-full flex items-center justify-center">

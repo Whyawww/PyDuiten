@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import type { ChangeEvent } from 'react';
 import { Camera, User as UserIcon } from 'lucide-react';
 import { API_BASE_URL } from '../../src/utils/api';
+import { useTranslation } from 'react-i18next';
 
 interface ProfilePhotoProps {
     photoPreview: string | null;
@@ -10,6 +11,7 @@ interface ProfilePhotoProps {
 
 export const ProfilePhoto = ({ photoPreview, onPhotoSelected }: ProfilePhotoProps) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { t } = useTranslation();
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -55,7 +57,10 @@ export const ProfilePhoto = ({ photoPreview, onPhotoSelected }: ProfilePhotoProp
                 accept="image/*"
                 className="hidden"
             />
-            <p className="mt-4 text-xs font-semibold text-gray-400 dark:text-gray-500 text-center">Format: JPG, PNG.<br />Maksimal 2MB (Opsional)</p>
+            <p
+                className="mt-4 text-xs font-semibold text-gray-400 dark:text-gray-500 text-center leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: t('photo.hint') }}
+            />
         </div>
     );
 };

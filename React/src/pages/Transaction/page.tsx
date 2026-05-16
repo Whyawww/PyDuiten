@@ -6,9 +6,12 @@ import { TransactionHistory } from '../../../component/transaction/TransactionHi
 import { AIAdvisorBar } from '../../../component/transaction/AIAdvisorBar';
 import { ConfirmModal } from '../../../component/transaction/ConfirmModal';
 import { useTransactionStore } from '../../../src/store/useTransactionStore';
+import { LanguageSwitcher } from '../../../component/ui/LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 export const TransactionPage = () => {
     const [editingTrx, setEditingTrx] = useState<TransactionItem | null>(null);
+    const { t } = useTranslation();
 
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -70,10 +73,13 @@ export const TransactionPage = () => {
 
     return (
         <div className="p-6 md:p-8 animate-fade-in relative pb-32 md:pb-24 min-h-screen">
+            <div className="absolute top-6 right-6 z-50">
+                <LanguageSwitcher />
+            </div>
             <ConfirmModal
                 isOpen={deleteId !== null}
-                title="Hapus Transaksi?"
-                message="Yakin mau hapus data ini? Kalau udah dihapus, datanya bakal hilang permanen dari server dan nggak bisa dibalikin lagi cuy."
+                title={t('transaction.delete_title')}
+                message={t('transaction.delete_msg')}
                 onConfirm={executeDelete}
                 onCancel={() => setDeleteId(null)}
                 isLoading={isDeleting}
@@ -82,10 +88,14 @@ export const TransactionPage = () => {
             <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-3">
-                        <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-white tracking-tight">Manajemen Transaksi</h1>
+                        <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-white tracking-tight">
+                            {t('transaction.title')}
+                        </h1>
                         {isLoading && <Loader2 className="w-5 h-5 animate-spin text-primary" />}
                     </div>
-                    <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">Catat semua arus kas di PyDuiten.</p>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">
+                        {t('transaction.subtitle')}
+                    </p>
                 </div>
             </div>
 

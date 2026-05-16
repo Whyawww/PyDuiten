@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Step {
     number: string;
@@ -12,45 +13,6 @@ interface Step {
         text: string;
     };
 }
-
-const STEPS: Step[] = [
-    {
-        number: '01',
-        title: 'Catat Transaksi',
-        description: 'Masukin gaji masuk atau duit jajan yang keluar. Cuma butuh 5 detik.',
-        tag: '5 detik aja',
-        colorClass: {
-            card: 'hover:bg-white/70',
-            badge: 'bg-primary/10 text-primary',
-            num: 'bg-primary/10 text-primary',
-            text: 'text-primary',
-        },
-    },
-    {
-        number: '02',
-        title: 'Dianalisis AI',
-        description: 'Sistem otomatis ngitung sisa saldo dan ngirim datanya ke otak AI.',
-        tag: 'Otomatis',
-        colorClass: {
-            card: 'hover:bg-white/70',
-            badge: 'bg-secondary/20 text-secondary',
-            num: 'bg-secondary/20 text-secondary',
-            text: 'text-secondary',
-        },
-    },
-    {
-        number: '03',
-        title: 'Terima Insight',
-        description: 'Baca masukan dari AI biar lu makin semangat nabung (atau tobat jajan).',
-        tag: 'Real-time',
-        colorClass: {
-            card: 'hover:bg-white/70',
-            badge: 'bg-tertiary/40 text-yellow-800',
-            num: 'bg-tertiary/40 text-yellow-800',
-            text: 'text-yellow-700',
-        },
-    },
-];
 
 const StepCard = ({ step, index }: { step: Step; index: number }) => {
     const ref = useRef<HTMLDivElement>(null);
@@ -123,36 +85,78 @@ const StepCard = ({ step, index }: { step: Step; index: number }) => {
     );
 };
 
-export const HowItWorksSection = () => (
-    <section className="py-20 bg-surface">
-        <div className="container mx-auto px-4 max-w-5xl">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-12 md:gap-20">
+export const HowItWorksSection = () => {
+    const { t } = useTranslation();
 
-                <div className="md:w-2/5 shrink-0">
-                    <p className="text-xs font-semibold tracking-widest uppercase text-primary mb-3">
-                        Cara mainnya
-                    </p>
-                    <h2 className="text-3xl sm:text-4xl font-black text-gray-800 tracking-tight leading-tight mb-4">
-                        Gampang banget.<br />
-                        <span className="text-primary">3 langkah</span> doang.
-                    </h2>
-                    <p className="text-sm text-gray-500 leading-relaxed">
-                        Ngga perlu mikir keras atau belajar akuntansi.
-                        Biarin sistem yang kerja buat lu.
-                    </p>
-                </div>
+    const STEPS: Step[] = useMemo(() => [
+        {
+            number: '01',
+            title: t('howItWorks.step1_title'),
+            description: t('howItWorks.step1_desc'),
+            tag: t('howItWorks.step1_tag'),
+            colorClass: {
+                card: 'hover:bg-white/70',
+                badge: 'bg-primary/10 text-primary',
+                num: 'bg-primary/10 text-primary',
+                text: 'text-primary',
+            },
+        },
+        {
+            number: '02',
+            title: t('howItWorks.step2_title'),
+            description: t('howItWorks.step2_desc'),
+            tag: t('howItWorks.step2_tag'),
+            colorClass: {
+                card: 'hover:bg-white/70',
+                badge: 'bg-secondary/20 text-secondary',
+                num: 'bg-secondary/20 text-secondary',
+                text: 'text-secondary',
+            },
+        },
+        {
+            number: '03',
+            title: t('howItWorks.step3_title'),
+            description: t('howItWorks.step3_desc'),
+            tag: t('howItWorks.step3_tag'),
+            colorClass: {
+                card: 'hover:bg-white/70',
+                badge: 'bg-tertiary/40 text-yellow-800',
+                num: 'bg-tertiary/40 text-yellow-800',
+                text: 'text-yellow-700',
+            },
+        },
+    ], [t]);
 
-                <div className="flex-1 flex flex-col gap-0 w-full">
-                    {STEPS.map((step, i) => (
-                        <div key={step.number}>
-                            <StepCard step={step} index={i} />
-                            {i < STEPS.length - 1 && (
-                                <div className="w-0.5 h-6 bg-gray-200 rounded-full ml-[42px]" />
-                            )}
-                        </div>
-                    ))}
+    return (
+        <section className="py-20 bg-surface">
+            <div className="container mx-auto px-4 max-w-5xl">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-12 md:gap-20">
+
+                    <div className="md:w-2/5 shrink-0">
+                        <p className="text-xs font-semibold tracking-widest uppercase text-primary mb-3">
+                            {t('howItWorks.label')}
+                        </p>
+                        <h2 className="text-3xl sm:text-4xl font-black text-gray-800 tracking-tight leading-tight mb-4">
+                            {t('howItWorks.heading1')}<br />
+                            <span className="text-primary">{t('howItWorks.heading2')}</span>
+                        </h2>
+                        <p className="text-sm text-gray-500 leading-relaxed">
+                            {t('howItWorks.desc')}
+                        </p>
+                    </div>
+
+                    <div className="flex-1 flex flex-col gap-0 w-full">
+                        {STEPS.map((step, i) => (
+                            <div key={step.number}>
+                                <StepCard step={step} index={i} />
+                                {i < STEPS.length - 1 && (
+                                    <div className="w-0.5 h-6 bg-gray-200 rounded-full ml-[42px]" />
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
-);
+        </section>
+    );
+};

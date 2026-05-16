@@ -2,6 +2,7 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 import { Download, Loader2, AlertCircle } from 'lucide-react';
 import { FinancialReportPDF } from './FinancialReportPDF';
 import type { ReportData } from './FinancialReportPDF';
+import { useTranslation } from 'react-i18next';
 
 type DownloadReportButtonProps = Omit<ReportData, 'dateRange'> & {
     filter: string;
@@ -15,6 +16,7 @@ export const DownloadReportButton = ({
     analysisNote,
 }: DownloadReportButtonProps) => {
     const fileName = `Laporan_PyDuiten_${filter.replace(/\s+/g, '_')}.pdf`;
+    const { t } = useTranslation();
 
     return (
         <PDFDownloadLink
@@ -35,7 +37,7 @@ export const DownloadReportButton = ({
                     return (
                         <>
                             <AlertCircle className="w-4 h-4 text-red-500" />
-                            <span className="text-red-500">Error, coba lagi</span>
+                            <span className="text-red-500">{t('dashboard.btn_pdf_error')}</span>
                         </>
                     );
                 }
@@ -43,14 +45,14 @@ export const DownloadReportButton = ({
                     return (
                         <>
                             <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                            <span>Menyiapkan...</span>
+                            <span>{t('dashboard.btn_pdf_loading')}</span>
                         </>
                     );
                 }
                 return (
                     <>
                         <Download className="w-4 h-4" />
-                        <span>Ekspor PDF</span>
+                        <span>{t('dashboard.btn_pdf_text')}</span>
                     </>
                 );
             }}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ArrowDownLeft, ArrowUpRight, Filter, Pencil, Trash2 } from 'lucide-react'; // [NEW] Import icon
+import { ArrowDownLeft, ArrowUpRight, Filter, Pencil, Trash2 } from 'lucide-react';
 import type { TransactionItem } from './TransactionForm';
+import { useTranslation } from 'react-i18next';
 
 export const TransactionHistory = ({
     transactions,
@@ -12,6 +13,7 @@ export const TransactionHistory = ({
     onDelete: (id: string) => void
 }) => {
     const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all');
+    const { t } = useTranslation();
 
     const formatRupiah = (angka: number) => {
         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
@@ -25,7 +27,7 @@ export const TransactionHistory = ({
     if (transactions.length === 0) {
         return (
             <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 animate-slide-up" style={{ animationDelay: '100ms' }}>
-                <p className="text-gray-400 font-medium">Belum ada transaksi. Yuk mulai catat!</p>
+                <p className="text-gray-400 font-medium">{t('transaction.history_empty')}</p>
             </div>
         );
     }
@@ -33,7 +35,7 @@ export const TransactionHistory = ({
     return (
         <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 animate-slide-up" style={{ animationDelay: '100ms' }}>
             <div className="flex items-center justify-between mb-6">
-                <h3 className="font-bold text-gray-800 dark:text-white">Riwayat Terakhir</h3>
+                <h3 className="font-bold text-gray-800 dark:text-white">{t('transaction.history_title')}</h3>
 
                 <div className="flex items-center gap-2 bg-surface/50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl px-3 py-1.5">
                     <Filter className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500" />
@@ -42,9 +44,9 @@ export const TransactionHistory = ({
                         onChange={(e) => setFilterType(e.target.value as 'all' | 'income' | 'expense')}
                         className="bg-transparent text-xs font-bold text-gray-600 dark:text-gray-300 outline-none cursor-pointer"
                     >
-                        <option value="all">Semua Transaksi</option>
-                        <option value="income">Pemasukan Aja</option>
-                        <option value="expense">Pengeluaran Aja</option>
+                        <option value="all">{t('transaction.history_filter_all')}</option>
+                        <option value="income">{t('transaction.history_filter_income')}</option>
+                        <option value="expense">{t('transaction.history_filter_expense')}</option>
                     </select>
                 </div>
             </div>
@@ -61,7 +63,7 @@ export const TransactionHistory = ({
                                     <p className="font-bold text-gray-800 dark:text-gray-200">{trx.note}</p>
                                     <div className="flex items-center gap-2 mt-0.5">
                                         <span className="text-[10px] font-bold px-2 py-0.5 bg-primary/10 text-primary rounded-md">
-                                            {trx.category || 'Lainnya'}
+                                            {t(`categories.${trx.category || 'Lainnya'}`)}
                                         </span>
                                         <p className="text-xs text-gray-400 dark:text-gray-500 border-l border-gray-200 dark:border-gray-600 pl-2">
                                             {new Date(trx.date).toLocaleDateString('id-ID')}
@@ -88,7 +90,7 @@ export const TransactionHistory = ({
                     ))
                 ) : (
                     <div className="text-center py-4">
-                        <p className="text-sm text-gray-400 dark:text-gray-500 font-medium">Ngga ada transaksi di kategori ini.</p>
+                        <p className="text-sm text-gray-400 dark:text-gray-500 font-medium">{t('transaction.history_filter_empty')}</p>
                     </div>
                 )}
             </div>

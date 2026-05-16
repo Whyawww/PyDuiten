@@ -3,15 +3,18 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Activity } from 'lucide-react';
 import type { TransactionItem } from '../transaction/TransactionForm';
 import { useThemeStore } from '../../src/store/useThemeStore';
+import { useTranslation } from 'react-i18next';
 
 export const CashFlowChart = ({ transactions }: { transactions: TransactionItem[] }) => {
     const theme = useThemeStore((state) => state.theme);
+    const { t, i18n } = useTranslation();
 
     const chartData = useMemo(() => {
         const sortedTransactions = [...transactions].reverse();
+        const currentLocale = i18n.language === 'id' ? 'id-ID' : 'en-US';
 
         const grouped = sortedTransactions.reduce((acc, trx) => {
-            const dateStr = new Date(trx.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+            const dateStr = new Date(trx.date).toLocaleDateString(currentLocale, { day: 'numeric', month: 'short' });
 
             if (!acc[dateStr]) acc[dateStr] = { date: dateStr, income: 0, expense: 0 };
 
@@ -22,7 +25,7 @@ export const CashFlowChart = ({ transactions }: { transactions: TransactionItem[
         }, {} as Record<string, { date: string; income: number; expense: number }>);
 
         return Object.values(grouped);
-    }, [transactions]);
+    }, [transactions, i18n.language]);
 
     const formatRupiah = (value: number) =>
         new Intl.NumberFormat('id-ID', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
@@ -34,15 +37,15 @@ export const CashFlowChart = ({ transactions }: { transactions: TransactionItem[
                     <Activity className="w-5 h-5" />
                 </div>
                 <div>
-                    <h3 className="font-bold text-gray-800 dark:text-white">Arus Kas</h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Pergerakan duit lu beberapa hari terakhir</p>
+                    <h3 className="font-bold text-gray-800 dark:text-white">{t('dashboard.chart_title')}</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">{t('dashboard.chart_subtitle')}</p>
                 </div>
             </div>
 
             {chartData.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
                     <Activity className="w-10 h-10 mb-2 opacity-50" />
-                    <p className="font-medium text-sm">Belum ada data buat dibikin grafik.</p>
+                    <p className="font-medium text-sm">{t('dashboard.chart_empty')}</p>
                 </div>
             ) : (
                 <div className="flex-1 w-full h-[250px]">
@@ -66,8 +69,8 @@ export const CashFlowChart = ({ transactions }: { transactions: TransactionItem[
 
                             <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }} />
 
-                            <Bar dataKey="income" name="Pemasukan" fill="#10B981" radius={[6, 6, 0, 0]} maxBarSize={50} />
-                            <Bar dataKey="expense" name="Pengeluaran" fill="#EF4444" radius={[6, 6, 0, 0]} maxBarSize={50} />
+                            <Bar dataKey="income" name={t('dashboard.type_income')} fill="#10B981" radius={[6, 6, 0, 0]} maxBarSize={50} />
+                            <Bar dataKey="expense" name={t('dashboard.type_expense')} fill="#EF4444" radius={[6, 6, 0, 0]} maxBarSize={50} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

@@ -1,4 +1,5 @@
 import { AlertTriangle, CheckCircle2, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface ConfirmModalProps {
     isOpen: boolean;
@@ -21,6 +22,7 @@ export const ConfirmModal = ({
     confirmText = 'Hapus',
     type = 'warning'
 }: ConfirmModalProps) => {
+    const { t } = useTranslation();
 
     if (!isOpen) return null;
 
@@ -51,7 +53,7 @@ export const ConfirmModal = ({
                             disabled={isLoading}
                             className="flex-1 py-3.5 px-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 active:scale-95"
                         >
-                            Batal
+                            {t('common.cancel')}
                         </button>
                     )}
                     <button

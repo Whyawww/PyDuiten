@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface LegalModalProps {
     isOpen: boolean;
@@ -8,6 +9,8 @@ interface LegalModalProps {
 }
 
 export const LegalModal = ({ isOpen, onClose, title, content }: LegalModalProps) => {
+    const { t } = useTranslation();
+
     if (!isOpen) return null;
 
     return (
@@ -33,7 +36,7 @@ export const LegalModal = ({ isOpen, onClose, title, content }: LegalModalProps)
                         onClick={onClose}
                         className="bg-primary text-white font-bold px-8 py-2.5 rounded-xl hover:shadow-lg active:scale-95 transition-all"
                     >
-                        Gua Ngerti, Cuy
+                        {t('legal.btn_understand')}
                     </button>
                 </div>
             </div>

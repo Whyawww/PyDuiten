@@ -1,5 +1,6 @@
 import { Mail, Phone, Lock, User as UserIcon, Save, Loader2 } from 'lucide-react';
 import { InputField } from '../ui/InputField';
+import { useTranslation } from 'react-i18next';
 
 interface ProfileFormProps {
     name: string;
@@ -11,20 +12,22 @@ interface ProfileFormProps {
 }
 
 export const ProfileForm = ({ name, email, phone, password, isLoading, onChange }: ProfileFormProps) => {
+    const { t } = useTranslation();
+
     return (
         <div className="flex-1 space-y-2">
             <InputField
-                label="Username *"
+                label={t('profile.label_username')}
                 type="text"
                 value={name}
                 onChange={(e) => onChange('name', e.target.value)}
-                placeholder="Nama"
+                placeholder={t('profile.placeholder_name')}
                 icon={<UserIcon className="w-5 h-5" />}
                 disabled={isLoading}
             />
 
             <InputField
-                label="Email *"
+                label={t('profile.label_email')}
                 type="email"
                 value={email}
                 onChange={(e) => onChange('email', e.target.value)}
@@ -34,7 +37,7 @@ export const ProfileForm = ({ name, email, phone, password, isLoading, onChange 
             />
 
             <InputField
-                label="Nomor HP *"
+                label={t('profile.label_phone')}
                 type="tel"
                 value={phone}
                 onChange={(e) => onChange('phone', e.target.value.replace(/[^0-9]/g, ''))}
@@ -44,11 +47,11 @@ export const ProfileForm = ({ name, email, phone, password, isLoading, onChange 
             />
 
             <InputField
-                label="Kata Sandi Baru (Opsional)"
+                label={t('profile.label_password')}
                 type="password"
                 value={password}
                 onChange={(e) => onChange('password', e.target.value)}
-                placeholder="Kosongkan jika tidak diubah"
+                placeholder={t('profile.placeholder_password')}
                 icon={<Lock className="w-5 h-5" />}
                 disabled={isLoading}
             />
@@ -61,7 +64,7 @@ export const ProfileForm = ({ name, email, phone, password, isLoading, onChange 
                         }`}
                 >
                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                    {isLoading ? 'Menyimpan...' : 'Simpan Perubahan'}
+                    {isLoading ? t('profile.btn_saving') : t('profile.btn_save')}
                 </button>
             </div>
         </div>

@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Download, Rocket } from 'lucide-react';
 import { usePWA } from '../../src/hooks/usePWA';
+import { useTranslation } from 'react-i18next';
 
 export const CTASection = () => {
     const { isInstallable, installPWA } = usePWA();
+    const { t } = useTranslation();
 
     return (
         <section className="py-20 bg-white">
@@ -14,28 +16,28 @@ export const CTASection = () => {
 
                     <div className="relative z-10">
                         <h2 className="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight">
-                            Udah Siap Pegang Kendali?
+                            {t('cta.heading')}
                         </h2>
                         <p className="text-white/80 font-medium text-lg mb-10 max-w-2xl mx-auto">
-                            Tinggalkan kebiasaan lama. Mulai catat keuangan lu sekarang dengan bantuan AI. Gratis, aman, dan tanpa iklan.
+                            {t('cta.desc')}
                         </p>
 
                         <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                             <Link to="register" className="flex items-center justify-center gap-2 bg-white text-primary px-8 py-4 rounded-3xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 font-bold text-lg w-full sm:w-auto active:scale-95">
                                 <Rocket className="w-5 h-5" />
-                                Daftar Sekarang
+                                {t('cta.btn_register')}
                             </Link>
 
                             <button
                                 onClick={installPWA}
                                 disabled={!isInstallable}
                                 className={`flex items-center justify-center gap-2 border-2 px-8 py-4 rounded-3xl transition-all duration-300 font-bold text-lg w-full sm:w-auto active:scale-95 ${isInstallable
-                                        ? 'bg-primary text-white border-white/30 hover:bg-white/10 hover:-translate-y-1'
-                                        : 'bg-white/10 text-white/50 border-white/10 cursor-not-allowed'
+                                    ? 'bg-primary text-white border-white/30 hover:bg-white/10 hover:-translate-y-1'
+                                    : 'bg-white/10 text-white/50 border-white/10 cursor-not-allowed'
                                     }`}
                             >
                                 <Download className="w-5 h-5" />
-                                {isInstallable ? 'Install PyDuiten' : 'Aplikasi Terpasang'}
+                                {isInstallable ? t('cta.btn_install') : t('cta.btn_installed')}
                             </button>
                         </div>
                     </div>

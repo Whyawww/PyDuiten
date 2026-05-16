@@ -1,8 +1,10 @@
 import { ArrowDownLeft, ArrowUpRight, Clock } from 'lucide-react';
 import type { TransactionItem } from '../transaction/TransactionForm';
+import { useTranslation } from 'react-i18next';
 
 export const RecentTransactions = ({ transactions }: { transactions: TransactionItem[] }) => {
     const recentTrx = transactions.slice(0, 5);
+    const { t } = useTranslation();
 
     const formatRupiah = (angka: number) =>
         new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
@@ -14,15 +16,13 @@ export const RecentTransactions = ({ transactions }: { transactions: Transaction
                     <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                    <h3 className="font-bold text-gray-800 dark:text-white">Aktivitas Terakhir</h3>
+                    <h3 className="font-bold text-gray-800 dark:text-white">{t('dashboard_recent.title')}</h3>
                 </div>
             </div>
 
             {recentTrx.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center">
-                    <p className="text-gray-400 dark:text-gray-500 font-medium text-center text-sm">
-                        Belum ada transaksi bulan ini.<br />Yuk mulai catat!
-                    </p>
+                    <p className="text-gray-400 dark:text-gray-500 font-medium text-center text-sm" dangerouslySetInnerHTML={{ __html: t('dashboard_recent.empty') }} />
                 </div>
             ) : (
                 <div className="space-y-4">

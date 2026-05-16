@@ -1,21 +1,23 @@
 import { BrainCircuit, LineChart, Smartphone } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const FeaturesSection = () => {
+    const { t } = useTranslation();
     const features = [
         {
             icon: <BrainCircuit className="w-8 h-8 text-primary" />,
-            title: 'AI Financial Advisor',
-            description: 'Dapet roasting pedas atau pujian manis langsung dari Gemini AI berdasarkan habit jajan lu tiap bulan.'
+            title: t('features.feat1_title'),
+            description: t('features.feat1_desc')
         },
         {
             icon: <LineChart className="w-8 h-8 text-secondary" />,
-            title: 'Dashboard Real-time',
-            description: 'Pantau arus kas masuk dan keluar dengan visualisasi data yang clean, gampang dibaca, dan ngga bikin pusing.'
+            title: t('features.feat2_title'),
+            description: t('features.feat2_desc')
         },
         {
             icon: <Smartphone className="w-8 h-8 text-yellow-600" />,
-            title: 'Ringan & Hemat Kuota',
-            description: 'Akses secepat kilat. Bisa di-install langsung ke HP lu tanpa perlu download berpuluh-puluh MB dari App Store.'
+            title: t('features.feat3_title'),
+            description: t('features.feat3_desc')
         }
     ];
 
@@ -24,10 +26,10 @@ export const FeaturesSection = () => {
             <div className="container mx-auto px-4 max-w-7xl">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl sm:text-4xl font-black text-gray-800 mb-4 tracking-tight">
-                        Kenapa Harus Pindah Kesini?
+                        {t('features.heading')}
                     </h2>
                     <p className="text-gray-600 font-medium max-w-2xl mx-auto">
-                        Bukan sekadar pencatat uang biasa. Kita bawa teknologi AI buat bantu lu sadar diri soal keuangan.
+                        {t('features.subheading')}
                     </p>
                 </div>
 

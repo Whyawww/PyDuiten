@@ -5,9 +5,12 @@ import { ConfirmModal } from '../../../component/transaction/ConfirmModal';
 import { ProfilePhoto } from '../../../component/profile/ProfilePhoto';
 import { ProfileForm } from '../../../component/profile/ProfileForm';
 import type { User } from '../../store/useAuthStore';
+import { LanguageSwitcher } from '../../../component/ui/LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 export const ProfilePage = () => {
     const { user, updateUser } = useAuthStore();
+    const { t } = useTranslation();
 
     const [formData, setFormData] = useState({
         name: user?.name || '',
@@ -37,7 +40,7 @@ export const ProfilePage = () => {
         setErrorMsg('');
 
         if (!formData.name || !formData.email || !formData.phone) {
-            setErrorMsg('Username, Email, dan No HP wajib diisi cuy!');
+            setErrorMsg(t('profile.err_required'));
             return;
         }
 
@@ -62,7 +65,7 @@ export const ProfilePage = () => {
             setShowSuccess(true);
         } catch (error: unknown) {
             if (error instanceof ApiError) setErrorMsg(error.message);
-            else setErrorMsg('Gagal nyimpen profil, coba lagi nanti cuy.');
+            else setErrorMsg(t('profile.err_failed')); // [FIX] Translate Error
         } finally {
             setIsLoading(false);
         }
@@ -70,18 +73,25 @@ export const ProfilePage = () => {
 
     return (
         <div className="p-6 md:p-8 animate-fade-in relative pb-32 md:pb-24 min-h-screen">
+            <div className="absolute top-6 right-6 z-50">
+                <LanguageSwitcher />
+            </div>
             <ConfirmModal
                 isOpen={showSuccess}
                 type="success"
-                title="Profil Diperbarui!"
-                message="Data profil lu berhasil disimpan dengan aman di database."
-                confirmText="Oke, Mantap"
+                title={t('profile.success_title')}
+                message={t('profile.success_desc')}
+                confirmText={t('profile.success_btn')}
                 onConfirm={() => setShowSuccess(false)}
             />
 
             <div className="mb-8">
-                <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-white tracking-tight">Profil Gua</h1>
-                <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">Atur data diri dan foto profil lu di sini.</p>
+                <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-white tracking-tight">
+                    {t('profile.title')}
+                </h1>
+                <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">
+                    {t('profile.subtitle')}
+                </p>
             </div>
 
             {errorMsg && (

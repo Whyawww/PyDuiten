@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Receipt, LogOut, Menu, ChevronLeft, UserCircle, Sun, Moon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import faviconImg from '../../src/assets/favicon.png';
 import { useAuthStore } from '../../src/store/useAuthStore';
 import { ConfirmModal } from '../transaction/ConfirmModal';
@@ -12,15 +13,16 @@ interface DashboardLayoutProps {
 }
 
 const menuItems = [
-    { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-    { name: 'Transaksi', icon: Receipt, path: '/transaction' },
-    { name: 'Profil', icon: UserCircle, path: '/profile' },
+    { key: 'layout.menu_dashboard', icon: LayoutDashboard, path: '/dashboard' },
+    { key: 'layout.menu_transaction', icon: Receipt, path: '/transaction' },
+    { key: 'layout.menu_profile', icon: UserCircle, path: '/profile' },
 ];
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     const location = useLocation();
     const navigate = useNavigate();
     const logout = useAuthStore((state) => state.logout);
+    const { t } = useTranslation(); // [NEW]
 
     const { theme, toggleTheme, initTheme } = useThemeStore();
 
@@ -43,11 +45,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <div className="min-h-screen bg-surface dark:bg-gray-950 flex overflow-hidden">
             <ConfirmModal
                 isOpen={isLogoutModalOpen}
-                title="Yakin Mau Keluar?"
-                message="Sesi lu bakal berakhir cuy. Lu harus masukin email dan password lagi buat masuk ke aplikasi."
+                title={t('layout.logout_title')}
+                message={t('layout.logout_msg')}
                 onConfirm={handleLogout}
                 onCancel={() => setIsLogoutModalOpen(false)}
-                confirmText="Keluar"
+                confirmText={t('layout.logout')}
             />
 
             <div
@@ -84,16 +86,17 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 </div>
 
                 <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-                    {menuItems.map(({ name, icon: Icon, path }) => {
+                    {menuItems.map(({ key, icon: Icon, path }) => {
                         const isActive = location.pathname === path;
+                        const translatedName = t(key);
                         return (
-                            <Link key={name} to={path}
+                            <Link key={key} to={path}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-200 whitespace-nowrap group
                                     ${isActive ? 'bg-primary/10 dark:bg-primary/20 text-primary'
                                         : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-white'}`}
                             >
                                 <Icon className={`w-5 h-5 shrink-0 transition-transform duration-200 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
-                                <span>{name}</span>
+                                <span>{translatedName}</span>
                                 {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />}
                             </Link>
                         );
@@ -103,11 +106,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <div className="p-4 space-y-2 border-t border-gray-100 dark:border-gray-800">
                     <button onClick={toggleTheme} className="flex items-center gap-3 px-4 py-3 w-full rounded-xl font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100 transition-all duration-200 whitespace-nowrap group">
                         {theme === 'light' ? <Moon className="w-5 h-5 shrink-0 group-hover:-translate-y-0.5" /> : <Sun className="w-5 h-5 shrink-0 text-yellow-400 group-hover:rotate-90" />}
-                        {theme === 'light' ? 'Mode Gelap' : 'Mode Terang'}
+                        {theme === 'light' ? t('layout.theme_dark') : t('layout.theme_light')}
                     </button>
                     <button onClick={() => setIsLogoutModalOpen(true)} className="flex items-center gap-3 px-4 py-3 w-full rounded-xl font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-200 whitespace-nowrap group">
                         <LogOut className="w-5 h-5 shrink-0 group-hover:-translate-x-0.5" />
-                        Keluar
+                        {t('layout.logout')}
                     </button>
                 </div>
             </aside>
@@ -119,12 +122,13 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </main>
 
             <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-30 px-6 py-3 flex justify-around items-center">
-                {menuItems.map(({ name, icon: Icon, path }) => {
+                {menuItems.map(({ key, icon: Icon, path }) => {
                     const isActive = location.pathname === path;
+                    const translatedName = t(key);
                     return (
-                        <Link key={name} to={path} className={`flex flex-col items-center gap-1 p-2 transition-colors duration-200 ${isActive ? 'text-primary' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'}`}>
+                        <Link key={key} to={path} className={`flex flex-col items-center gap-1 p-2 transition-colors duration-200 ${isActive ? 'text-primary' : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'}`}>
                             <Icon className={`w-5 h-5 transition-transform duration-200 ${isActive ? 'scale-110' : ''}`} />
-                            <span className="text-[10px] font-bold">{name}</span>
+                            <span className="text-[10px] font-bold">{translatedName}</span>
                         </Link>
                     );
                 })}

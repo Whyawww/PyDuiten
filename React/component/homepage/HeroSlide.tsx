@@ -1,5 +1,6 @@
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export interface SlideData {
     id: number;
@@ -16,6 +17,7 @@ interface HeroSlideProps {
 }
 
 export const HeroSlide = ({ slide, isActive, direction }: HeroSlideProps) => {
+    const { t } = useTranslation();
     const enterClass = direction === 'next'
         ? 'animate-slide-in-right'
         : 'animate-slide-in-left';
@@ -83,7 +85,7 @@ export const HeroSlide = ({ slide, isActive, direction }: HeroSlideProps) => {
             transition-all duration-300 font-bold text-lg w-full sm:w-auto
             active:scale-95
           ">
-                        Mulai Sekarang Gratis
+                        {t('hero.btn_start')}
                         <ArrowRight className="w-5 h-5" />
                     </Link>
                 </div>

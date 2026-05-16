@@ -14,6 +14,7 @@ import { ForgotPassword } from './pages/Auth/ForgotPassword/page';
 import { ResetPassword } from './pages/Auth/ResetPassword/page';
 import { PrivacyPage } from './pages/Legal/Privacy';
 import { TermsPage } from './pages/Legal/Terms';
+import './i18n';
 
 function App() {
   const [showSplash, setShowSplash] = useState(

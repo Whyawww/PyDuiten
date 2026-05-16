@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { AuthLayout } from '../../../../component/layout/AuthLayout';
 import { InputField } from '../../../../component/ui/InputField';
 import { SocialButton } from '../../../../component/ui/SocialButton';
@@ -8,9 +9,11 @@ import { apiFetch, ApiError } from '../../../utils/api';
 import { ConfirmModal } from '../../../../component/transaction/ConfirmModal';
 import { LegalModal } from '../../../../component/ui/LegalModal';
 import { PrivacyContent, TermsContent } from '../../../../component/ui/LegalContent';
+import { LanguageSwitcher } from '../../../../component/ui/LanguageSwitcher';
 
 export const Register = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     // State form
     const [name, setName] = useState('');
@@ -29,12 +32,12 @@ export const Register = () => {
         setErrorMsg('');
 
         if (!name || !email || !password) {
-            setErrorMsg('Tolong isi semua kolom ya bro!');
+            setErrorMsg(t('register.err_all_fields'));
             return;
         }
 
         if (password.length < 6) {
-            setErrorMsg('Password minimal 6 karakter cuy!');
+            setErrorMsg(t('register.err_password_short'));
             return;
         }
 
@@ -54,7 +57,7 @@ export const Register = () => {
             } else if (error instanceof Error) {
                 setErrorMsg(error.message);
             } else {
-                setErrorMsg('Terjadi kesalahan yang tidak diketahui.');
+                setErrorMsg(t('auth.err_unknown'));
             }
         } finally {
             setIsLoading(false);
@@ -76,96 +79,100 @@ export const Register = () => {
     );
 
     return (
-        <AuthLayout title="Gabung PyDuiten Sekarang!" subtitle="Satu langkah lagi buat tobat finansial. Daftarin diri lu di bawah.">
+        <div className="relative">
+            <div className="absolute top-6 right-6 z-50">
+                <LanguageSwitcher />
+            </div>
 
             <LegalModal
                 isOpen={modal.open}
                 onClose={() => setModal({ ...modal, open: false })}
-                title={modal.type === 'privacy' ? 'Kebijakan Privasi' : 'Syarat & Ketentuan'}
+                title={modal.type === 'privacy' ? t('legal.privacy_title') : t('legal.terms_title')}
                 content={modal.type === 'privacy' ? <PrivacyContent /> : <TermsContent />}
             />
 
             <ConfirmModal
                 isOpen={showSuccessModal}
                 type="success"
-                title="Pendaftaran Berhasil!"
-                message="Akun lu udah aktif dan siap dipakai buat nyatet keuangan. Gas login sekarang bro!"
-                confirmText="Lanjut Login"
+                title={t('register.success_title')}
+                message={t('register.success_desc')}
+                confirmText={t('register.success_btn')}
                 onConfirm={handleSuccessConfirm}
             />
 
-            <form onSubmit={handleRegister} className="w-full">
-                <SocialButton icon={GoogleIcon} text="Daftar cepat dengan Google" type="button" />
+            <AuthLayout title={t('register.title')} subtitle={t('register.subtitle')}>
+                <form onSubmit={handleRegister} className="w-full">
+                    <SocialButton icon={GoogleIcon} text={t('register.btn_google')} type="button" />
 
-                <div className="flex items-center gap-4 my-6">
-                    <div className="flex-1 h-px bg-gray-200"></div>
-                    <span className="text-sm font-medium text-gray-400">ATAU</span>
-                    <div className="flex-1 h-px bg-gray-200"></div>
-                </div>
-
-                {errorMsg && (
-                    <div className="bg-red-50 text-red-500 p-3 rounded-xl mb-4 text-sm font-medium text-center">
-                        {errorMsg}
+                    <div className="flex items-center gap-4 my-6">
+                        <div className="flex-1 h-px bg-gray-200"></div>
+                        <span className="text-sm font-medium text-gray-400">{t('auth.or')}</span>
+                        <div className="flex-1 h-px bg-gray-200"></div>
                     </div>
-                )}
 
-                <InputField
-                    label="Nama Lengkap"
-                    type="text"
-                    placeholder="Wahyu Aji Nusantara"
-                    icon={<User className="w-5 h-5" />}
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                />
-                <InputField
-                    label="Alamat Email"
-                    type="email"
-                    placeholder="contoh@gmail.com"
-                    icon={<Mail className="w-5 h-5" />}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <InputField
-                    label="Kata Sandi"
-                    type="password"
-                    placeholder="Minimal 8 karakter"
-                    icon={<Lock className="w-5 h-5" />}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                    {errorMsg && (
+                        <div className="bg-red-50 text-red-500 p-3 rounded-xl mb-4 text-sm font-medium text-center">
+                            {errorMsg}
+                        </div>
+                    )}
 
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className={`flex justify-center items-center gap-2 w-full text-white font-bold px-6 py-4 rounded-2xl shadow-md transition-all duration-300 mt-4 mb-6 ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary hover:shadow-lg hover:-translate-y-1 active:scale-95'
-                        }`}
-                >
-                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Buat Akun'}
-                </button>
+                    <InputField
+                        label={t('register.name_label')}
+                        type="text"
+                        placeholder={t('register.name_placeholder')}
+                        icon={<User className="w-5 h-5" />}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                    <InputField
+                        label={t('register.email_label')}
+                        type="email"
+                        placeholder={t('register.email_placeholder')}
+                        icon={<Mail className="w-5 h-5" />}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <InputField
+                        label={t('register.password_label')}
+                        type="password"
+                        placeholder={t('register.password_placeholder')}
+                        icon={<Lock className="w-5 h-5" />}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
 
-                <p className="text-[10px] text-gray-400 mt-4 text-center leading-relaxed">
-                    Dengan buat akun, lu setuju sama
                     <button
-                        type="button"
-                        onClick={() => setModal({ open: true, type: 'terms' })}
-                        className="text-primary font-bold hover:underline mx-1"
+                        type="submit"
+                        disabled={isLoading}
+                        className={`flex justify-center items-center gap-2 w-full text-white font-bold px-6 py-4 rounded-2xl shadow-md transition-all duration-300 mt-4 mb-6 ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary hover:shadow-lg hover:-translate-y-1 active:scale-95'}`}
                     >
-                        Syarat & Ketentuan
+                        {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : t('register.btn_submit')}
                     </button>
-                    dan
-                    <button
-                        type="button"
-                        onClick={() => setModal({ open: true, type: 'privacy' })}
-                        className="text-primary font-bold hover:underline mx-1"
-                    >
-                        Kebijakan Privasi
-                    </button> kita.
-                </p>
 
-                <p className="text-center text-gray-600 font-medium">
-                    Udah punya akun? <a href="/login" className="text-primary font-bold hover:underline">Masuk di sini</a>
-                </p>
-            </form>
-        </AuthLayout>
+                    <p className="text-[10px] text-gray-400 mt-4 text-center leading-relaxed">
+                        {t('register.terms_text_1')}
+                        <button
+                            type="button"
+                            onClick={() => setModal({ open: true, type: 'terms' })}
+                            className="text-primary font-bold hover:underline mx-1"
+                        >
+                            {t('legal.terms_title')}
+                        </button>
+                        {t('register.terms_text_2')}
+                        <button
+                            type="button"
+                            onClick={() => setModal({ open: true, type: 'privacy' })}
+                            className="text-primary font-bold hover:underline mx-1"
+                        >
+                            {t('legal.privacy_title')}
+                        </button> {t('register.terms_text_3')}
+                    </p>
+
+                    <p className="text-center text-gray-600 font-medium">
+                        {t('register.have_account')} <a href="/login" className="text-primary font-bold hover:underline">{t('register.login_here')}</a>
+                    </p>
+                </form>
+            </AuthLayout>
+        </div>
     );
 };

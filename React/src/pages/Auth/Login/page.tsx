@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next'; // [NEW]
 import { AuthLayout } from '../../../../component/layout/AuthLayout';
 import { InputField } from '../../../../component/ui/InputField';
 import { SocialButton } from '../../../../component/ui/SocialButton';
 import { apiFetch, ApiError } from '../../../utils/api';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { WelcomeOverlay } from '../../../../component/ui/WelcomeOverlay';
+import { LanguageSwitcher } from '../../../../component/ui/LanguageSwitcher'; // [NEW] Pastiin path lu bener
 
 export const Login = () => {
     const navigate = useNavigate();
     const loginStore = useAuthStore((state) => state.login);
+    const { t } = useTranslation(); // [NEW]
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -26,7 +29,7 @@ export const Login = () => {
         setEmailError('');
 
         if (!email) {
-            setEmailError('Isi dulu email lu cuy, biar kita tau akun siapa yang mau di-reset!');
+            setEmailError(t('auth.err_email_empty')); // [FIX] Translate error
             return;
         }
 
@@ -38,7 +41,7 @@ export const Login = () => {
         setErrorMsg('');
 
         if (!email || !password) {
-            setErrorMsg('Email dan password wajib diisi coy!');
+            setErrorMsg(t('auth.err_empty')); // [FIX] Translate error
             return;
         }
 
@@ -48,10 +51,7 @@ export const Login = () => {
             const response = await apiFetch<{
                 status: string;
                 message: string;
-                data: {
-                    accessToken: string;
-                    user: { id: string; email: string; name: string; phone?: string; photo?: string; }
-                };
+                data: { accessToken: string; user: { id: string; email: string; name: string; } };
             }>('/auth/login', {
                 method: 'POST',
                 body: JSON.stringify({ email, password }),
@@ -59,16 +59,15 @@ export const Login = () => {
 
             loginStore(response.data.user, response.data.accessToken);
             setUserName(response.data.user.name);
-
             setShowWelcome(true);
 
         } catch (error: unknown) {
             if (error instanceof ApiError) {
-                setErrorMsg(error.message);
+                setErrorMsg(error.message); // Biasanya pesan backend dibiarin
             } else if (error instanceof Error) {
                 setErrorMsg(error.message);
             } else {
-                setErrorMsg('Terjadi kesalahan yang tidak diketahui.');
+                setErrorMsg(t('auth.err_unknown')); // [FIX] Translate error
             }
         } finally {
             setIsLoading(false);
@@ -85,20 +84,25 @@ export const Login = () => {
     );
 
     return (
-        <>
+        <div className="relative">
+            {/* [NEW] Tombol Language Switcher melayang di pojok layar buat Login */}
+            <div className="absolute top-6 right-6 z-50">
+                <LanguageSwitcher />
+            </div>
+
             {showWelcome && (
                 <WelcomeOverlay
                     username={userName}
                     onDone={() => navigate('/dashboard')}
                 />
             )}
-            <AuthLayout title="Welcome Back, Cuy!" subtitle="Masukin kredensial lu buat ngelihat seberapa boros lu bulan ini.">
+            <AuthLayout title={t('auth.login_title')} subtitle={t('auth.login_subtitle')}>
                 <form onSubmit={handleLogin} className="w-full">
-                    <SocialButton icon={GoogleIcon} text="Lanjut dengan Google" type="button" />
+                    <SocialButton icon={GoogleIcon} text={t('auth.btn_google')} type="button" />
 
                     <div className="flex items-center gap-4 my-6">
                         <div className="flex-1 h-px bg-gray-200"></div>
-                        <span className="text-sm font-medium text-gray-400">ATAU</span>
+                        <span className="text-sm font-medium text-gray-400">{t('auth.or')}</span>
                         <div className="flex-1 h-px bg-gray-200"></div>
                     </div>
 
@@ -109,9 +113,9 @@ export const Login = () => {
                     )}
 
                     <InputField
-                        label="Alamat Email"
+                        label={t('auth.email_label')}
                         type="email"
-                        placeholder="email@gmail.com"
+                        placeholder={t('auth.email_placeholder')}
                         icon={<Mail className="w-5 h-5" />}
                         value={email}
                         onChange={(e) => {
@@ -122,9 +126,9 @@ export const Login = () => {
                     />
 
                     <InputField
-                        label="Kata Sandi"
+                        label={t('auth.password_label')}
                         type="password"
-                        placeholder="••••••••"
+                        placeholder={t('auth.password_placeholder')}
                         icon={<Lock className="w-5 h-5" />}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
@@ -136,24 +140,23 @@ export const Login = () => {
                             onClick={handleForgotPassword}
                             className="text-sm font-bold text-primary hover:text-secondary transition-colors"
                         >
-                            Lupa sandi?
+                            {t('auth.forgot_password')}
                         </button>
                     </div>
 
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className={`flex justify-center items-center gap-2 w-full text-white font-bold px-6 py-4 rounded-2xl shadow-md transition-all duration-300 mb-6 ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary hover:shadow-lg hover:-translate-y-1 active:scale-95'
-                            }`}
+                        className={`flex justify-center items-center gap-2 w-full text-white font-bold px-6 py-4 rounded-2xl shadow-md transition-all duration-300 mb-6 ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary hover:shadow-lg hover:-translate-y-1 active:scale-95'}`}
                     >
-                        {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Masuk Sekarang'}
+                        {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : t('auth.btn_login')}
                     </button>
 
                     <p className="text-center text-gray-600 font-medium">
-                        Belum punya akun? <a href="/register" className="text-primary font-bold hover:underline">Daftar dulu sini</a>
+                        {t('auth.no_account')} <a href="/register" className="text-primary font-bold hover:underline">{t('auth.register_here')}</a>
                     </p>
                 </form>
             </AuthLayout>
-        </>
+        </div>
     );
 };

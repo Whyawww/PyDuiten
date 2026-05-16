@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { AlertTriangle, CheckCircle2, Flame, Loader2, Bot } from 'lucide-react';
 import { apiFetch, ApiError } from '../../src/utils/api';
+import { useTranslation } from 'react-i18next';
 
 export const AIAdvisorBar = ({ income, expense }: { income: number, expense: number }) => {
     const [advice, setAdvice] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
+    const { t } = useTranslation();
 
     const ratio = income === 0 ? (expense > 0 ? 1 : 0) : expense / income;
 
@@ -37,9 +39,9 @@ export const AIAdvisorBar = ({ income, expense }: { income: number, expense: num
                 setAdvice(res.data.advice);
             } catch (error: unknown) {
                 if (error instanceof ApiError && error.status === 429) {
-                    setAdvice('Buset cuy nanyanya kecepatan, napas dulu semenit!');
+                    setAdvice(t('ai_advisor.rate_limit'));
                 } else {
-                    setAdvice('Waduh, AI lagi pusing mikirin duit lu. Coba refresh lagi ya...');
+                    setAdvice(t('ai_advisor.error'));
                 }
             } finally {
                 setIsLoading(false);
@@ -49,7 +51,7 @@ export const AIAdvisorBar = ({ income, expense }: { income: number, expense: num
         const timeoutId = setTimeout(fetchAdvice, 1000);
         return () => clearTimeout(timeoutId);
 
-    }, [income, expense]);
+    }, [income, expense, t]);
 
     if (income === 0 && expense === 0) return null;
 
@@ -61,11 +63,11 @@ export const AIAdvisorBar = ({ income, expense }: { income: number, expense: num
                 </div>
                 <div className="flex-1 text-white">
                     <h4 className="font-black text-sm md:text-base tracking-tight flex items-center gap-2">
-                        Gemini AI Advisor
+                        {t('ai_advisor.title')}
                         {isLoading && <Loader2 className="w-3 h-3 animate-spin" />}
                     </h4>
                     <p className="text-xs md:text-sm font-medium opacity-90 transition-all">
-                        {isLoading ? 'Lagi mikir kata-kata yang pas buat lu...' : advice}
+                        {isLoading ? t('ai_advisor.thinking') : advice}
                     </p>
                 </div>
             </div>

@@ -9,9 +9,12 @@ import { CategoryPieChart } from '../../../component/dashboard/CategoryPieChart'
 import { SmartNudge } from '../../../component/ui/SmartNudge';
 import { FinancialSummaryNote } from '../../../component/dashboard/FinancialSummaryNote';
 import { DownloadReportButton } from '../../../component/dashboard/DownloadReportButton';
+import { LanguageSwitcher } from '../../../component/ui/LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 export const Dashboard = () => {
     const [filter, setFilter] = useState('Bulan Ini');
+    const { t } = useTranslation();
 
     const allTransactions = useTransactionStore((state) => state.transactions);
     const fetchTransactions = useTransactionStore((state) => state.fetchTransactions);
@@ -56,19 +59,18 @@ export const Dashboard = () => {
         }, { saldo: 0, pemasukan: 0, pengeluaran: 0 });
     }, [filteredTransactions]);
 
+    // Algoritma Insight Heuristik
     const smartInsightText = useMemo(() => {
-        // Base Nudge
-        let insight = "Keuangan lu masih terpantau aman dan wajar. Jangan lupa alokasiin buat dana darurat/investasi ya!";
+        let insight = t('dashboard.insight_default');
         if (summaryData.pemasukan === 0 && summaryData.pengeluaran === 0) {
-            return "Belum ada transaksi di periode ini cuy. Catat keuangan lu!";
+            return t('dashboard.insight_empty');
         }
         if (summaryData.pengeluaran > summaryData.pemasukan) {
-            insight = "Set, pengeluaran lu lebih gede dari pemasukan di periode ini. Rem dikit cuy biar nggak boncos!";
+            insight = t('dashboard.insight_negative');
         } else if (summaryData.pemasukan > 0 && summaryData.pengeluaran <= summaryData.pemasukan * 0.5) {
-            insight = "Gokil! Keuangan lu OK BAT. Rutinin nabung/investasi cuy dalam bentuk ape aje.";
+            insight = t('dashboard.insight_positive');
         }
 
-        // Analisa Komparatif Kategori
         if (filter !== 'Bulan Ini') return insight;
 
         const now = new Date();
@@ -132,28 +134,28 @@ export const Dashboard = () => {
         }
 
         if (worstCategory) {
-            insight += ` Btw, bulan ini kategori ${worstCategory} lu lebih boros ${highestPercentage}% cuy dibanding bulan lalu. Evaluasi lagi pengeluaran lu buat hal itu!`;
+            const translatedCat = t(`categories.${worstCategory}`, worstCategory);
+            insight += t('dashboard.insight_boros', { category: translatedCat, percentage: highestPercentage });
         }
 
         return insight;
-    }, [summaryData, filter, allTransactions]);
+    }, [summaryData, filter, allTransactions, t]);
 
     const pdfAnalysisNote = useMemo(() => {
         if (summaryData.pemasukan === 0 && summaryData.pengeluaran === 0) {
-            return "Belum ada transaksi di periode ini cuy. Yuk mulai catat keuangan lu!";
+            return t('dashboard.pdf_empty');
         }
         if (summaryData.pengeluaran > summaryData.pemasukan) {
-            return "Waduh, pengeluaran lu lebih gede dari pemasukan di periode ini. Rem dikit jajan lu cuy biar nggak boncos!";
+            return t('dashboard.pdf_negative');
         }
         if (summaryData.pemasukan > 0 && summaryData.pengeluaran <= summaryData.pemasukan * 0.5) {
-            return "Gokil! Keuangan lu super sehat. Pertahankan puasa belanjanya dan rutinin nabung cuy.";
+            return t('dashboard.pdf_positive');
         }
-        return "Keuangan lu masih terpantau aman dan wajar. Jangan lupa alokasiin buat dana darurat ya!";
-    }, [summaryData]);
+        return t('dashboard.pdf_default');
+    }, [summaryData, t]);
 
     const pdfTransactions = useMemo(() => {
         return filteredTransactions.map((trx, index) => {
-
             const item = trx as unknown as {
                 id?: string | number;
                 type: string;
@@ -179,16 +181,24 @@ export const Dashboard = () => {
 
     return (
         <main className="p-6 md:p-8 animate-fade-in">
-            <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-                <div>
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div className="md:w-1/3">
                     <div className="flex items-center gap-3">
-                        <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-white tracking-tight">Ringkasan Keuangan</h1>
+                        <h1 className="text-2xl sm:text-3xl font-black text-gray-800 dark:text-white tracking-tight">
+                            {t('dashboard.title')}
+                        </h1>
                         {isLoading && <Loader2 className="w-5 h-5 animate-spin text-primary" />}
                     </div>
-                    <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">Pantau terus duit lu biar nggak boncos.</p>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">
+                        {t('dashboard.subtitle')}
+                    </p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex justify-center flex-1 py-2 md:py-0">
+                    <LanguageSwitcher />
+                </div>
+
+                <div className="flex items-center justify-between sm:justify-end gap-3 md:w-1/3">
                     <DownloadReportButton
                         userName={userName}
                         filter={filter}
@@ -198,20 +208,20 @@ export const Dashboard = () => {
                     />
 
                     <div className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200
-            dark:border-gray-700 rounded-2xl px-4 py-2.5 shadow-sm hover:border-primary
-            focus-within:border-primary transition-colors">
+                        dark:border-gray-700 rounded-2xl px-4 py-2.5 shadow-sm hover:border-primary
+                        focus-within:border-primary transition-colors">
                         <Filter className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                         <select
                             value={filter}
                             onChange={(e) => setFilter(e.target.value)}
                             className="bg-transparent text-sm font-semibold text-gray-700 dark:text-gray-300
-                    outline-none cursor-pointer appearance-none pr-4"
+                                outline-none cursor-pointer appearance-none pr-4"
                             disabled={isLoading}
                         >
-                            <option value="Minggu Ini">Minggu Ini</option>
-                            <option value="Bulan Ini">Bulan Ini</option>
-                            <option value="3 Bulan">3 Bulan Terakhir</option>
-                            <option value="Tahun Ini">Tahun Ini</option>
+                            <option value="Minggu Ini">{t('dashboard.filter_week')}</option>
+                            <option value="Bulan Ini">{t('dashboard.filter_month')}</option>
+                            <option value="3 Bulan">{t('dashboard.filter_3months')}</option>
+                            <option value="Tahun Ini">{t('dashboard.filter_year')}</option>
                         </select>
                     </div>
                 </div>
@@ -228,7 +238,9 @@ export const Dashboard = () => {
                         <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-sm text-blue-900 dark:text-blue-300 mb-1">Insight PyDuiten</h3>
+                        <h3 className="font-bold text-sm text-blue-900 dark:text-blue-300 mb-1">
+                            {t('dashboard.insight_title')}
+                        </h3>
                         <p className="text-sm font-medium text-blue-800 dark:text-blue-400/90 leading-relaxed">
                             {smartInsightText}
                         </p>

@@ -1,5 +1,6 @@
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import logoIcon from '../../src/assets/icons.png';
+import { useTranslation } from 'react-i18next';
 
 const COLORS = {
     primary: '#e07a5f',
@@ -61,81 +62,82 @@ export interface ReportData {
 interface FinancialReportPDFProps {
     data: ReportData;
 }
+export const FinancialReportPDF = ({ data }: FinancialReportPDFProps) => {
+    const { t } = useTranslation();
 
-const formatRp = (val: number) =>
-    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val);
+    const formatRp = (val: number) =>
+        new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val);
 
-const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '');
+    const stripHtml = (html: string) => html.replace(/<[^>]*>?/gm, '');
 
-export const FinancialReportPDF = ({ data }: FinancialReportPDFProps) => (
-    <Document>
-        <Page size="A4" style={s.page}>
+    return (
+        <Document>
+            <Page size="A4" style={s.page}>
 
-            <View style={s.header}>
-                <Image src={logoIcon} style={s.logo} />
-                <View style={s.headerTextContainer}>
-                    <Text style={s.title}>PyDuiten Financial Report</Text>
-                    <Text style={s.subtitle}>
-                        Nama: {data.userName} · Periode: {data.dateRange}
-                    </Text>
+                <View style={s.header}>
+                    <Image src={logoIcon} style={s.logo} />
+                    <View style={s.headerTextContainer}>
+                        <Text style={s.title}>{t('dashboard_pdf.doc_title')}</Text>
+                        <Text style={s.subtitle}>
+                            {t('dashboard_pdf.name', { name: data.userName, period: data.dateRange })}
+                        </Text>
+                    </View>
                 </View>
-            </View>
 
-            <View style={s.section}>
-                <Text style={s.sectionTitle}>Ringkasan Saldo</Text>
-                <View style={s.card}>
-                    <View style={s.row}>
-                        <View>
-                            <Text style={s.label}>Total Pemasukan</Text>
-                            <Text style={s.valueIncome}>{formatRp(data.summary.pemasukan)}</Text>
-                        </View>
-                        <View>
-                            <Text style={s.label}>Total Pengeluaran</Text>
-                            <Text style={s.valueExpense}>{formatRp(data.summary.pengeluaran)}</Text>
-                        </View>
-                        <View>
-                            <Text style={s.label}>Saldo Akhir</Text>
-                            <Text style={s.value}>{formatRp(data.summary.saldo)}</Text>
+                <View style={s.section}>
+                    <Text style={s.sectionTitle}>{t('dashboard_pdf.summary')}</Text>
+                    <View style={s.card}>
+                        <View style={s.row}>
+                            <View>
+                                <Text style={s.label}>{t('dashboard_pdf.total_income')}</Text>
+                                <Text style={s.valueIncome}>{formatRp(data.summary.pemasukan)}</Text>
+                            </View>
+                            <View>
+                                <Text style={s.label}>{t('dashboard_pdf.total_expense')}</Text>
+                                <Text style={s.valueExpense}>{formatRp(data.summary.pengeluaran)}</Text>
+                            </View>
+                            <View>
+                                <Text style={s.label}>{t('dashboard_pdf.final_balance')}</Text>
+                                <Text style={s.value}>{formatRp(data.summary.saldo)}</Text>
+                            </View>
                         </View>
                     </View>
                 </View>
-            </View>
 
-            <View style={s.section}>
-                <Text style={s.sectionTitle}>Analisis Sistem & Catatan</Text>
-                <View style={[s.card, s.cardBlue]}>
-                    <Text style={s.noteText}>{stripHtml(data.analysisNote)}</Text>
-                </View>
-            </View>
-
-            <View style={s.section}>
-                <Text style={s.sectionTitle}>Detail Transaksi Terakhir</Text>
-                <View style={s.tableHeader}>
-                    <Text style={s.cellHead}>Tanggal</Text>
-                    <Text style={s.cellHead}>Kategori</Text>
-                    <Text style={s.cellHead}>Tipe</Text>
-                    <Text style={s.cellHead}>Nominal</Text>
-                </View>
-                {data.transactions.slice(0, 15).map((trx) => (
-                    <View key={trx.id} style={s.tableRow}>
-                        <Text style={s.cell}>
-                            {new Date(trx.date).toLocaleDateString('id-ID')}
-                        </Text>
-                        <Text style={s.cell}>{trx.categoryName || 'Lainnya'}</Text>
-                        <Text style={trx.type === 'INCOME' ? s.cellIncome : s.cellExpense}>
-                            {trx.type}
-                        </Text>
-                        <Text style={s.cell}>{formatRp(Number(trx.amount))}</Text>
+                <View style={s.section}>
+                    <Text style={s.sectionTitle}>{t('dashboard_pdf.analysis')}</Text>
+                    <View style={[s.card, s.cardBlue]}>
+                        <Text style={s.noteText}>{stripHtml(data.analysisNote)}</Text>
                     </View>
-                ))}
-            </View>
+                </View>
 
-            <View style={s.footer}>
-                <Text>
-                    Laporan digenerate otomatis oleh PyDuiten · Terus pantau duit lu biar nggak boncos!
-                </Text>
-            </View>
+                <View style={s.section}>
+                    <Text style={s.sectionTitle}>{t('dashboard_pdf.details')}</Text>
+                    <View style={s.tableHeader}>
+                        <Text style={s.cellHead}>{t('dashboard_pdf.date')}</Text>
+                        <Text style={s.cellHead}>{t('dashboard_pdf.category')}</Text>
+                        <Text style={s.cellHead}>{t('dashboard_pdf.type')}</Text>
+                        <Text style={s.cellHead}>{t('dashboard_pdf.amount')}</Text>
+                    </View>
+                    {data.transactions.slice(0, 15).map((trx) => (
+                        <View key={trx.id} style={s.tableRow}>
+                            <Text style={s.cell}>
+                                {new Date(trx.date).toLocaleDateString('id-ID')}
+                            </Text>
+                            <Text style={s.cell}>{t(`categories.${trx.categoryName || 'Lainnya'}`, trx.categoryName || 'Lainnya')}</Text>
+                            <Text style={trx.type === 'INCOME' ? s.cellIncome : s.cellExpense}>
+                                {trx.type}
+                            </Text>
+                            <Text style={s.cell}>{formatRp(Number(trx.amount))}</Text>
+                        </View>
+                    ))}
+                </View>
 
-        </Page>
-    </Document>
-);
+                <View style={s.footer}>
+                    <Text>{t('dashboard_pdf.footer')}</Text>
+                </View>
+
+            </Page>
+        </Document>
+    );
+};
