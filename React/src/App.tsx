@@ -7,6 +7,7 @@ import { Home } from './pages/Home/page';
 import { Login } from './pages/Auth/Login/page';
 import { Register } from './pages/Auth/Register/page';
 import { Dashboard } from './pages/Dashboard/page';
+import { WishlistPage } from './pages/WishList/page';
 import { TransactionPage } from './pages/Transaction/page'
 import { ProfilePage } from './pages/Profile/page';
 import { SplashScreen } from '../component/ui/SplashScreen'
@@ -59,6 +60,13 @@ function App() {
               <TransactionPage />
             </DashboardLayout>
           } />
+
+          <Route path="/wishlist" element={
+            <DashboardLayout>
+              <WishlistPage />
+            </DashboardLayout>
+          } />
+
           <Route
             path="/profile"
             element={

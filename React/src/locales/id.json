@@ -286,10 +286,26 @@
     "menu_dashboard": "Dashboard",
     "menu_transaction": "Transaksi",
     "menu_profile": "Profil",
+    "menu_wishlist": "Daftar Keinginan",
     "theme_dark": "Mode Gelap",
     "theme_light": "Mode Terang",
     "logout": "Keluar",
     "logout_title": "Yakin Mau Keluar?",
     "logout_msg": "Sesi lu bakal berakhir cuy. Lu harus masukin email dan password lagi buat masuk ke aplikasi."
+  },
+  "wishlist": {
+    "title": "Wishlist Impian",
+    "subtitle": "Pantau target barang impian lu. Jangan jajan mulu biar cepet kebeli!",
+    "total_target": "Total Kebutuhan",
+    "available_balance": "Saldo Saat Ini",
+    "progress_ready": "Uang Udah Cukup!",
+    "progress_wait": "Dikit Lagi Kumpul",
+    "add_title": "Tambah Impian Baru",
+    "label_name": "Nama Barang / Tujuan",
+    "placeholder_name": "Contoh: Beli PS5, Liburan ke Bali...",
+    "label_budget": "Target Harga (Rp)",
+    "placeholder_budget": "Contoh: 8.500.000",
+    "btn_add": "Masukin Wishlist",
+    "empty": "Lu belum punya impian yang mau dicapai nih cuy. Yuk tambahin!"
   }
 }

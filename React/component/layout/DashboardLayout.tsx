@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Receipt, LogOut, Menu, ChevronLeft, UserCircle, Sun, Moon } from 'lucide-react';
+import { LayoutDashboard, Receipt, LogOut, Menu, ChevronLeft, UserCircle, Sun, Moon, Target } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import faviconImg from '../../src/assets/favicon.png';
 import { useAuthStore } from '../../src/store/useAuthStore';
@@ -15,6 +15,7 @@ interface DashboardLayoutProps {
 const menuItems = [
     { key: 'layout.menu_dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { key: 'layout.menu_transaction', icon: Receipt, path: '/transaction' },
+    { key: 'layout.menu_wishlist', icon: Target, path: '/wishlist' },
     { key: 'layout.menu_profile', icon: UserCircle, path: '/profile' },
 ];
 
@@ -22,7 +23,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     const location = useLocation();
     const navigate = useNavigate();
     const logout = useAuthStore((state) => state.logout);
-    const { t } = useTranslation(); // [NEW]
+    const { t } = useTranslation();
 
     const { theme, toggleTheme, initTheme } = useThemeStore();
 

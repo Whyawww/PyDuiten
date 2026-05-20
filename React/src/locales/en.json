@@ -286,10 +286,26 @@
     "menu_dashboard": "Dashboard",
     "menu_transaction": "Transactions",
     "menu_profile": "Profile",
+    "menu_wishlist": "Wishlist",
     "theme_dark": "Dark Mode",
     "theme_light": "Light Mode",
     "logout": "Log Out",
     "logout_title": "Sure You Want to Log Out?",
     "logout_msg": "Your session will end, bro. You'll need to enter your email and password again to access the app."
+  },
+  "wishlist": {
+    "title": "Dream Wishlist",
+    "subtitle": "Track your dream goals. Stop buying iced coffee so you can afford it!",
+    "total_target": "Total Required",
+    "available_balance": "Current Balance",
+    "progress_ready": "Fully Funded!",
+    "progress_wait": "Almost There",
+    "add_title": "Add New Goal",
+    "label_name": "Item / Goal Name",
+    "placeholder_name": "E.g., Buy PS5, Trip to Bali...",
+    "label_budget": "Target Budget (Rp)",
+    "placeholder_budget": "E.g., 8,500,000",
+    "btn_add": "Add to Wishlist",
+    "empty": "You don't have any goals yet, bro. Add some!"
   }
 }
