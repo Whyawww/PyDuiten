@@ -21,7 +21,7 @@ export const WishlistPage = () => {
         fetchTransactions();
         const saved = localStorage.getItem('pyduiten_wishlist');
         if (saved) {
-            try {
+            try { 
                 const parsed = JSON.parse(saved);
                 if (Array.isArray(parsed)) {
                     setWishlists(parsed as WishlistItem[]);
