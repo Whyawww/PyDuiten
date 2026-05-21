@@ -306,6 +306,15 @@
     "label_budget": "Target Budget (Rp)",
     "placeholder_budget": "E.g., 8,500,000",
     "btn_add": "Add to Wishlist",
-    "empty": "You don't have any goals yet, bro. Add some!"
+    "empty": "You don't have any goals yet, bro. Add some!",
+    "btn_edit": "Edit",
+    "btn_save_edit": "Save",
+    "btn_cancel": "Cancel",
+    "btn_move_up": "Move up",
+    "btn_move_down": "Move down",
+    "achieved_label": "Achieved!",
+    "mark_achieved": "Mark as achieved",
+    "unmark_achieved": "Unmark achieved",
+    "achieved_toast": "Congrats! You nailed your goal!"
   }
 }

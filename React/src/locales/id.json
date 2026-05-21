@@ -306,6 +306,15 @@
     "label_budget": "Target Harga (Rp)",
     "placeholder_budget": "Contoh: 8.500.000",
     "btn_add": "Masukin Wishlist",
-    "empty": "Lu belum punya impian yang mau dicapai nih cuy. Yuk tambahin!"
+    "empty": "Lu belum punya impian yang mau dicapai nih cuy. Yuk tambahin!",
+    "btn_edit": "Edit",
+    "btn_save_edit": "Simpan",
+    "btn_cancel": "Batal",
+    "btn_move_up": "Naikan prioritas",
+    "btn_move_down": "Turunkan prioritas",
+    "achieved_label": "Tercapai!",
+    "mark_achieved": "Tandai tercapai",
+    "unmark_achieved": "Batalkan tercapai",
+    "achieved_toast": "Selamat! Impian lu tercapai cuy!"
   }
 }
