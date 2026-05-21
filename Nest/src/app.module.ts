@@ -10,6 +10,7 @@ import { AiService } from './modules/ai/ai.service';
 import { AiModule } from './modules/ai/ai.module';
 import { AuthService } from './auth/auth.service';
 import { UsersModule } from './users/users.module';
+import { WishlistsModule } from './modules/wishlist/wishlists.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UsersModule } from './users/users.module';
     ConfigModule.forRoot({ isGlobal: true }),
     AiModule,
     UsersModule,
+    WishlistsModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,

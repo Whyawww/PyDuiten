@@ -17,6 +17,7 @@ model User {
   resetTokenExp   DateTime?
   transactions Transaction[]
   budgets      Budget[]
+  wishlists    Wishlist[]
   categories   Category[] 
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
@@ -61,6 +62,22 @@ model Budget {
   user        User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, month, year])
+}
+
+model Wishlist {
+  id          String   @id @default(uuid())
+  name        String
+  budget      Decimal  @db.Decimal(20, 2)
+  priority    Int      @default(0)
+  isAchieved  Boolean  @default(false)
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
 }
 
 enum TransactionType {
